@@ -140,136 +140,154 @@
 <style scoped lang="less">
 // 搜索栏样式
 .search {
-    position: relative;
-    width: 100%;
-    max-width: 600px;
-    margin: 20vh auto 0;
-    user-select: none; // 不可复制文本
+    position: relative; // 设置定位为相对定位，方便内部元素和伪元素定位
+    width: 100%; // 宽度占满父容器
+    max-width: 600px; // 最大宽度 600px
+    margin: 20vh auto 0; // 上边距 20vh，左右居中
+    user-select: none; // 不可复制
 
     // 搜索栏主体容器
     .search-container {
-        display: flex;
-        align-items: center;
-        background: white;
-        border-radius: 24px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        width: 100%;
+        display: flex; // flex 表示弹性布局，子元素可以按照一定的比例分配空间
+        width: 100%; // 宽度占满父容器
+        align-items: center; // 垂直居中
+        background: white; // 白色背景
+        border-radius: 24px; // 圆角 24px
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1); // 阴影
 
         // 搜索引擎选择图标 (左侧)
         .search-engine {
-            flex: 0 0 50px; /* 固定宽度 */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #F0F8FF; /* 这里设置左侧背景颜色 */
-            border-top-left-radius: 24px;
-            border-bottom-left-radius: 24px;
-            cursor: pointer;
-            padding: 13px 15px;
-
+            display: flex; // flex 表示弹性布局，子元素可以按照一定的比例分配空间
+            flex: 0 0 50px; // 固定宽度 50px，不可伸缩
+            padding: 13px 15px; // 内边距
+            align-items: center; // 垂直居中
+            justify-content: center; // 水平居中
+            background: #F0F8FF; // 设置左侧背景颜色
+            border-top-left-radius: 24px; // 左上角圆角
+            border-bottom-left-radius: 24px; // 左下角圆角
+            cursor: pointer; // 使鼠标悬停时显示小手
+            // 搜索引擎图标样式
             img {
-                width: 24px;
-                height: 24px;
-                object-fit: contain;
+                width: 24px; // 图标宽度 24px
+                height: 24px; // 图标高度 24px
+                object-fit: contain; // 图标填充方式：保持原始比例
             }
         }
 
         // 输入框 (占满中间空间)
         input {
-            flex-grow: 1;
-            border: none;
-            outline: none;
-            font-size: 16px;
-            padding: 0 12px;
+            flex-grow: 1; // 占满剩余空间
+            border: none; // 去除边框
+            outline: none; // 去除输入框默认样式
+            font-size: 16px; // 字体大小 16px
+            padding: 0 12px; // 左右内边距 12px
         }
 
         // 搜索按钮 (右侧)
         .search-confirm {
-            flex: 0 0 35px; /* 固定宽度 */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #F0F8FF; /* 这里设置右侧背景颜色 */
-            border-top-right-radius: 24px;
-            border-bottom-right-radius: 24px;
-            cursor: pointer;
-            padding: 13px 15px;
-
+            display: flex; // flex 表示弹性布局，子元素可以按照一定的比例分配空间
+            flex: 0 0 35px; // 固定宽度 35px，不可伸缩
+            padding: 13px 15px; // 内边距
+            align-items: center; // 垂直居中
+            justify-content: center; // 水平居中
+            background: #F0F8FF; // 设置右侧背景颜色
+            border-top-right-radius: 24px; // 右上角圆角
+            border-bottom-right-radius: 24px; // 右下角圆角
+            cursor: pointer; // 使鼠标悬停时显示小手
+            // 搜索图标样式
             img {
-                width: 24px;
-                height: 24px;
-                object-fit: contain;
+                width: 24px; // 图标宽度 24px
+                height: 24px; // 图标高度 24px
+                object-fit: contain; // 图标填充方式：保持原始比例
             }
         }
     }
 
     // 搜索引擎选择面板
     .engine-select {
-        position: absolute;
-        top: 100%;
-        left: 10px; /* 确保对齐搜索引擎图标 */
-        background: white;
-        border-radius: 12px;
-        margin-top: 12px; /* 增加间距，使三角形不遮挡内容 */
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        z-index: 10;
-        display: inline-block;
-        padding-left: 10px;
+        position: absolute; // absolute：绝对定位，相对于最近的已定位的祖先元素
+        top: 100%; // 位于搜索栏下方
+        left: 10px; // 调整位置，使其与搜索栏对齐
+        margin-top: 12px; // 增加间距，使三角形不遮挡内容
+        padding-left: 10px; // 左侧内边距
+        background: white; // 白色背景
+        border-radius: 12px; // 圆角 12px
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1); // 阴影
+        z-index: 10; // 设置 z-index 为 10，确保在搜索建议面板之上
+        display: inline-block; // 行内块元素
 
-        /* 添加上方的三角形 */
+        // 添加上方的三角形
         &::before {
-            content: "";
-            position: absolute;
-            top: -10px; /* 让三角形位于面板的上方 */
-            left: 20px; /* 调整三角形的位置，使其对齐搜索引擎图标 */
-            border-left: 10px solid transparent;
-            border-right: 10px solid transparent;
-            border-bottom: 10px solid white; /* 三角形颜色与面板背景色一致 */
+            content: ""; // 设置伪元素内容为空
+            position: absolute; // absolute：绝对定位，相对于最近的已定位的祖先元素
+            top: -10px; // 让三角形位于面板的上方
+            left: 20px; // 调整三角形的位置，使其对齐搜索引擎图标
+            border-left: 10px solid transparent; // 三角形的左侧边框
+            border-right: 10px solid transparent; // 三角形的右侧边框
+            border-bottom: 10px solid white; // 三角形颜色与面板背景色一致
         }
 
+        // 搜索引擎列表
         .engine-list {
-            display: flex;
-            gap: 12px;
-            padding: 6px;
+            display: flex; // flex 表示弹性布局，子元素可以按照一定的比例分配空间
+            gap: 12px; // 子元素之间的间距
+            padding: 6px; // 内边距
 
+            // 搜索引擎图标容器
             .engine-item {
-                cursor: pointer;
-                border-radius: 8px;
-                transition: background-color 0.2s;
+                border-radius: 8px; // 圆角 8px
+                transition: background-color 0.2s; // 添加背景颜色过渡效果
+                cursor: pointer; // 使鼠标悬停时显示小手
 
+                // 搜索引擎图标样式
                 img {
-                    padding: 8px;
-                    width: 24px;
-                    height: 24px;
-                    object-fit: contain;
+                    padding: 8px; // 内边距 8px
+                    width: 24px; // 图标宽度 24px
+                    height: 24px; // 图标高度 24px
+                    object-fit: contain; // 图标填充方式：保持原始比例
                 }
             }
 
+            // 鼠标悬停时的样式
             .engine-item:hover {
-                background: #f5f5f5;
+                background: #f5f5f5; // 鼠标悬停时的背景颜色
             }
         }
     }
 
+    // 搜索建议面板
     .suggestions {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: white;
-        border-radius: 12px;
-        margin-top: 8px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        z-index: 10;
+        position: absolute; // absolute：绝对定位，相对于最近的已定位的祖先元素
+        top: 100%; // 位于搜索栏下方
+        left: 0; // 与搜索栏左对齐
+        right: 0; // 与搜索栏右对齐
+        margin-top: 8px; // 增加间距，使搜索建议面板与搜索栏对齐
+        background: white; // 白色背景
+        border-radius: 12px; // 圆角 12px
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1); // 阴影
+        z-index: 10; // 设置 z-index 为 10，确保在搜索引擎选择面板之上
+        overflow: hidden; // 让子元素不能超出圆角
 
+        // 搜索建议列表
         .suggestion-item {
-            padding: 8px 16px;
-            cursor: pointer;
-            transition: background-color 0.2s;
+            padding: 8px 16px; // 内边距
+            transition: background-color 0.2s; // 添加背景颜色过渡效果
+            cursor: pointer; // 使鼠标悬停时显示小手
         }
 
+        // 确保第一个搜索建议项在 hover 时仍然保持圆角
+        .suggestion-item:first-child {
+            border-top-left-radius: 12px; // 左上角圆角
+            border-top-right-radius: 12px; // 右上角圆角
+        }
+        // 确保最后一个搜索建议项在 hover 时仍然保持圆角
+        .suggestion-item:last-child {
+            border-bottom-left-radius: 12px; // 左下角圆角
+            border-bottom-right-radius: 12px; // 右下角圆角
+        }
+        // 鼠标悬停时的样式
         .suggestion-item:hover {
-            background: #f5f5f5;
+            background: #f5f5f5; // 鼠标悬停时的背景颜色
         }
     }
 }
