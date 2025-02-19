@@ -1,7 +1,7 @@
 // 从 vue 导入 createApp 方法，用于创建 Vue 应用实例
 import { createApp } from 'vue'
 // 从当前目录下的 App.vue 文件导入根组件 App
-import App from './App.vue'
+import App from '@/App.vue'
 
 // 从 axios 库导入 axios，用于进行 HTTP 请求
 import axios from 'axios'

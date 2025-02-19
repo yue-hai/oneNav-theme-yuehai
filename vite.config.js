@@ -19,15 +19,25 @@ export default defineConfig({
         port: 81,
         // 配置代理服务器，解决开发环境中的跨域问题
         proxy: {
-            // 代理 /api 路径下的请求
-            '/api': {
+            // 代理 /bing 路径下的请求
+            '/bing': {
                 // 目标服务器地址，代理将请求转发到该地址
-                target: 'http://127.0.0.1:80',
-                // 重写请求路径，将 /api 前缀去掉，转发时路径为原始路径；例如：/api/data/findDuplicate -> /data/findDuplicate
-                rewrite: (path) => path.replace(/^\/api/, ''),
-                // 是否启用 WebSocket 代理
-                ws: true,
+                target: 'https://api.bing.com',
+                // 重写请求路径，将 /bing 前缀去掉，转发时路径为原始路径；例如：/bing/?q=Vite -> /?q=Vite
+                rewrite: (path) => path.replace(/^\/bing/, ''),
                 // 更改请求的源站，伪装为目标服务器发送请求，解决跨域问题
+                changeOrigin: true
+            },
+            // 代理 /google 路径下的请求
+            '/google': {
+                target: 'https://suggestqueries.google.com',
+                rewrite: (path) => path.replace(/^\/google/, ''),
+                changeOrigin: true
+            },
+            // 代理 /baidu 路径下的请求
+            '/baidu': {
+                target: 'https://suggestion.baidu.com',
+                rewrite: (path) => path.replace(/^\/baidu/, ''),
                 changeOrigin: true
             }
         }
