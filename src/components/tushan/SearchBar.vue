@@ -1,6 +1,6 @@
 <template>
-    <!-- 搜索栏组件 -->
-    <div class="search">
+    <!-- 搜索栏组件；isNavVisible 用于控制搜索栏的上移 -->
+    <div class="search" :class="{ 'search-move-up': isNavVisible }">
         <!-- 搜索栏主体容器 -->
         <div class="search-container">
             <!-- 搜索引擎选择图标 -->
@@ -42,6 +42,8 @@
      */
     // 引入 vue3 的响应式 API
     import { ref, watch } from 'vue'
+    // 接收父组件传递的参数
+    const { isNavVisible } = defineProps(['isNavVisible']);
     // 引入静态数据
     import { tushanStaticData } from '@/data/tushanStaticData.js';
     // 引入搜索建议处理工具
@@ -145,6 +147,7 @@
     max-width: 600px; // 最大宽度 600px
     margin: 20vh auto 0; // 上边距 20vh，左右居中
     user-select: none; // 不可复制
+    transition: transform 0.4s ease; // 添加平滑动画
 
     // 搜索栏主体容器
     .search-container {
@@ -290,5 +293,10 @@
             background: #f5f5f5; // 鼠标悬停时的背景颜色
         }
     }
+}
+
+// 当 NavList 显示时，SearchBar 上移 5vh
+.search-move-up {
+    transform: translateY(-5vh); // 让 SearchBar 向上移动 5vh
 }
 </style>
