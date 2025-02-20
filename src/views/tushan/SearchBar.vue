@@ -41,13 +41,13 @@
      * 此处代码块用于引入组件需要的 API、传递的数据和方法、通用数据
      */
     // 引入 vue3 的响应式 API
-    import { ref, watch } from 'vue'
+    import { ref, watch, onUnmounted } from 'vue'
     // 接收父组件传递的参数
     const { isNavVisible } = defineProps(['isNavVisible']);
     // 引入静态数据
     import { tushanStaticData } from '@/data/tushanStaticData.js';
     // 引入搜索建议处理工具
-    import { fetchSuggestions } from '@/utils/tushan/searchSuggestion.js';
+    import { fetchSuggestions, cleanupSuggestions } from '@/utils/tushan/searchSuggestion.js';
     // 引入搜索图标
     import searchIcon from '@/assets/images/tushan/searchBar/搜索.svg'
 
@@ -105,10 +105,13 @@
     window.addEventListener('click', (e) => {
         // 获取搜索引擎选择面板元素
         const searchEl = document.querySelector('.search-engine')
-        // 如果点击的不是搜索引擎选择面板，则隐藏搜索引擎选择面板
+        // 如果点击的不是搜索引擎选择面板，则隐藏搜索引擎选择面板，否则重新获取搜索建议
         if (!searchEl?.contains(e.target)) {
             // 隐藏搜索引擎选择面板
             showEngineSelect.value = false
+        }else{
+            // 重新获取搜索建议
+            fetchSuggestions(suggestions, currentEngine, searchText.value)
         }
     })
 
@@ -136,6 +139,21 @@
         }
         // 获取搜索建议
         fetchSuggestions(suggestions, currentEngine, newValue)
+    })
+    // 组件卸载时清理清理全局回调函数和 script 标签
+    onUnmounted(() => {
+        cleanupSuggestions()
+    })
+    // 添加点击外部关闭搜索建议面板的功能
+    window.addEventListener('click', (e) => {
+        // 获取搜索栏容器
+        const searchContainer = document.querySelector('.search-container')
+        // 获取搜索建议面板
+        const suggestionsPanel = document.querySelector('.suggestions')
+        // 如果点击的不是搜索栏容器或搜索建议面板，则隐藏搜索建议面板
+        if (!searchContainer?.contains(e.target) && !suggestionsPanel?.contains(e.target)) {
+            showSuggestions.value = false
+        }
     })
 </script>
 
