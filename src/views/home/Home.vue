@@ -1,21 +1,115 @@
 <template>
     <!-- 添加 router-view 来渲染子路由内容 -->
     <router-view />
+
+    <!-- 错误提示组件 -->
+    <ErrorTip v-if="isErrorTipVisible" :errorTipData="errorTipData"></ErrorTip>
 </template>
 
 <script setup>
     /**
      * 此处代码块用于引入组件需要的 API、传递的数据和方法、通用数据
      */
+    // 引入 vue3 的响应式 API
+    import { ref, provide, onMounted } from 'vue'
     // 引入 vue-router 的路由 API
     import { useRouter } from 'vue-router'
     // 创建 useRoute 实例
     const router = useRouter()
+    // 引入 serverConfig 仓库，用于获取 token
+    import { serverConfig } from "@/store/serverConfig.js";
+    // 引入 pinia 转换，将仓库转换为响应式变量
+    import { storeToRefs } from "pinia";
+    // 使用 storeToRefs 将仓库转换为响应式变量，方便在模板中使用
+    const { apiBaseUrl, token } = storeToRefs(serverConfig());
+    // 从环境变量中获取服务器配置文件路径
+    const serverConfigPath = import.meta.env.VITE_SERVER_CONFIG_PATH;
+    // 引入 API 请求工具类
+    import { getApiRequest } from '@/utils/apiRequest.js';
 
 
     /**
-     * 此处代码块用于页面跳转
+     * 此处代码块用于引入组件
      */
-    // 页面加载完毕后，跳转到 tushan 首页
-    router.push('/tushan')
+    // 引入 ErrorTip 错误提示组件
+    import ErrorTip from "@/components/common/ErrorTip.vue";
+
+
+    /**
+     * 此处代码块用于控制各种弹窗的显示与隐藏，将方法提供给子组件调用
+     */
+    // 控制错误提示的显示与隐藏
+    const isErrorTipVisible = ref(false);
+    // 存储错误提示的数据
+    const errorTipData = ref({});
+    // 显示错误提示，传递错误提示数据
+    const openErrorTip = (data) => {
+        errorTipData.value = data;
+        isErrorTipVisible.value = true;
+    };
+    // 关闭错误提示，隐藏错误提示组件
+    const closeErrorTip = () => {
+        isErrorTipVisible.value = false;
+    }
+
+
+    /**
+     * 此处代码块使用 provide 提供方法和数据给子组件调用，子组件通过 inject 接收
+     */
+    provide('homeMethod', {
+        openErrorTip,
+        closeErrorTip,
+    });
+
+
+    /**
+     * 此处代码块用于获取服务器配置信息
+     */
+    // 当组件挂载时，获取服务器配置信息
+    onMounted(async () => {
+        try {
+            // 获取服务器配置文件
+            const response = await fetch(serverConfigPath);
+            // 将服务器配置文件转换为 JSON 格式
+            const config = await response.json();
+            // 获取服务器配置文件中的参数，设置到仓库中
+            apiBaseUrl.value = config.apiBaseUrl;
+            token.value = config.token;
+
+            // 调用获取登录信息的 API
+            getApiRequest({
+                homeMethod: { openErrorTip, closeErrorTip },
+                url: `/index.php`,
+                urlParams: { c: "api", method: "check_login" },
+                successCallback: (response) => { loginSuccessCallback(response) },
+                errorCallback: (error) => { loginErrorCallback(error) }
+            }).then();
+        } catch (error) {
+            console.error('配置加载失败：', error);
+        }
+    });
+    // 定义获取登录信息成功时的回调函数
+    const loginSuccessCallback = (response) => {
+        // 判断响应码是否为 200
+        if (response.data.code === 200) {
+            // 是 200，已登录，跳转到 tushan 页面
+            router.push('/tushan')
+            return;
+        }
+
+        // 不是 200，未登录，调用未登录回调函数
+        loginErrorCallback();
+    }
+    // 定义获取登录信息失败时的回调函数
+    const loginErrorCallback = () => {
+        // 显示错误提示
+        openErrorTip({
+            text: "用户未登录",
+            tooltip: "获取登录信息失败，可能是未登录或接口出错，若已登录请检查 nginx 设置",
+            closeCountdown: 5
+        });
+
+        // 将当前页面重定向到登录页
+        window.location.href = `${apiBaseUrl.value}/index.php?c=login`;
+    }
 </script>
