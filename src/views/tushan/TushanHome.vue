@@ -23,9 +23,9 @@
      * 此处代码块用于引入组件
      */
     // 引入 SearchBar 搜索栏组件
-    import SearchBar from '@/components/tushan/SearchBar.vue'
+    import SearchBar from '@/views/tushan/SearchBar.vue'
     // 引入 NavList 导航列表组件
-    import NavList from '@/components/tushan/NavList.vue'
+    import NavList from '@/views/tushan/NavList.vue'
 
 
     /**
