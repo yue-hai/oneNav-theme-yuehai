@@ -26,6 +26,8 @@
     const serverConfigPath = import.meta.env.VITE_SERVER_CONFIG_PATH;
     // 引入 API 请求工具类
     import { getApiRequest } from '@/utils/apiRequest.js';
+    // 引入通过 oneNav 获取导航数据工具类
+    import { getCategoryList } from '@/utils/tushan/getNavigationData.js';
 
 
     /**
@@ -63,42 +65,43 @@
 
 
     /**
-     * 此处代码块用于获取服务器配置信息
+     * 此处代码块用于获取服务器配置信息、登录信息、导航数据
      */
     // 当组件挂载时，获取服务器配置信息
     onMounted(async () => {
         try {
             // 获取服务器配置文件
-            const response = await fetch(serverConfigPath);
+            const serverConfigFile = await fetch(serverConfigPath);
             // 将服务器配置文件转换为 JSON 格式
-            const config = await response.json();
+            const serverConfig = await serverConfigFile.json();
             // 获取服务器配置文件中的参数，设置到仓库中
-            apiBaseUrl.value = config.apiBaseUrl;
-            token.value = config.token;
+            apiBaseUrl.value = serverConfig.apiBaseUrl;
+            token.value = serverConfig.token;
 
             // 调用获取登录信息的 API
-            getApiRequest({
+            const loginInfo = await getApiRequest({
                 homeMethod: { openErrorTip, closeErrorTip },
                 url: `/index.php`,
                 urlParams: { c: "api", method: "check_login" },
-                successCallback: (response) => { loginSuccessCallback(response) },
-                errorCallback: (error) => { loginErrorCallback(error) }
-            }).then();
+            });
+            // 获取登录信息成功，调用登录成功回调函数
+            loginSuccessCallback(loginInfo)
         } catch (error) {
             console.error('配置加载失败：', error);
+            // 获取登录信息失败，调用登录失败回调函数
+            loginErrorCallback(error)
         }
     });
     // 定义获取登录信息成功时的回调函数
-    const loginSuccessCallback = (response) => {
-        // 判断响应码是否为 200
-        if (response.data.code === 200) {
-            // 是 200，已登录，跳转到 tushan 页面
-            router.push('/tushan')
-            return;
+    const loginSuccessCallback = (loginInfo) => {
+        // 判断响应码是否为 200；不知道为什么，开发环境调用这个接口会失败，但是打包部署之后就可以了，所以开发时先移除判断
+        if (loginInfo.data.code !== 200) {
+            // 不是 200，未登录，调用未登录回调函数
+            loginErrorCallback();
         }
 
-        // 不是 200，未登录，调用未登录回调函数
-        loginErrorCallback();
+        // 调用获取导航数据的 API，如果获取成功则跳转到 tushan 页面
+        getCategoryList({ openErrorTip, closeErrorTip }, () => { router.push('/tushan') });
     }
     // 定义获取登录信息失败时的回调函数
     const loginErrorCallback = () => {
