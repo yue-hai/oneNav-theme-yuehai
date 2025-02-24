@@ -2,11 +2,11 @@
 import { defineStore } from 'pinia'
 
 /**
- * 定义一个名为 serverConfig 的 store
+ * 定义一个名为 navigationData 的 store
  * 这个 store 将用于管理与用户认证相关的状态和操作
- * serverConfigStore 是一个 store 的实例，可以通过 useStore('serverConfigStore') 来获取
+ * navigationDataStore 是一个 store 的实例，可以通过 useStore('navigationDataStore') 来获取
  */
-export const serverConfigStore = defineStore('serverConfig', {
+export const navigationDataStore = defineStore('navigationData', {
     /**
      * 用于持久化存储状态
      */
@@ -27,26 +27,15 @@ export const serverConfigStore = defineStore('serverConfig', {
      */
     state: () => {
         return {
-            // apiBaseUrl，API 的基础地址
-            apiBaseUrl: '',
-            // token，用于验证用户身份
-            token: '',
+            // 导航数据
+            navigationDataList: [],
         }
     },
     /**
      * actions 是一个对象，其中包含能够修改状态的方法
      * 在这里定义的方法将用来修改相关的状态
      */
-    actions: {
-        /**
-         * 设置 API 的基础地址、token
-         */
-        setApiBaseUrlToken(apiBaseUrl, token) {
-            // 修改 store 中的 apiBaseUrl 和 token
-            this.apiBaseUrl = apiBaseUrl;
-            this.token = token;
-        },
-    },
+    actions: {},
     /**
      * getters 是一个对象，其中包含能够获取状态的方法
      * 在这里定义的方法将用来获取相关的状态
