@@ -1,13 +1,13 @@
 <template>
     <!-- 搜索栏 -->
-    <SearchBar :is-nav-visible="showNavList"/>
+    <SearchBar :is-navigation-visible="showNavigationList"/>
 
     <!-- 导航列表动画容器；transition 是 Vue 提供的过渡动画组件 -->
     <transition name="fade-up">
         <!-- 导航列表容器 -->
-        <div class="nav-list-wrapper" v-show="showNavList">
+        <div class="nav-list-wrapper" v-show="showNavigationList">
             <!-- 导航列表 -->
-            <NavList />
+            <NavigationList />
         </div>
     </transition>
 </template>
@@ -24,15 +24,15 @@
      */
     // 引入 SearchBar 搜索栏组件
     import SearchBar from '@/views/tushan/SearchBar.vue'
-    // 引入 NavList 导航列表组件
-    import NavList from '@/views/tushan/NavList.vue'
+    // 引入 NavigationList 导航列表组件
+    import NavigationList from '@/views/tushan/NavigationList.vue'
 
 
     /**
      * 此处代码块用于定义导航列表组件的显示和隐藏逻辑
      */
     // 控制导航列表是否显示
-    const showNavList = ref(false)
+    const showNavigationList = ref(false)
     // 监听鼠标滚轮事件，控制导航列表的显示和隐藏
     const handleScroll = (event) => {
         // 获取滚轮滚动的方向
@@ -41,26 +41,26 @@
         const scrollTop = document.documentElement.scrollTop || document.body.scrollTop
         // 判断滚轮滚动的方向是不是向下
         if (deltaY > 0) {
-            // 向下滚动时显示 NavList
-            showNavList.value = true
+            // 向下滚动时显示 NavigationList
+            showNavigationList.value = true
         } else if (deltaY < 0) {
-            // 向上滚动，且页面已回到顶部时隐藏 NavList
+            // 向上滚动，且页面已回到顶部时隐藏 NavigationList
             if (scrollTop === 0) {
-                showNavList.value = false
+                showNavigationList.value = false
             }
         }
     }
     // 监听点击事件，控制导航列表的显示和隐藏
     const handleClick = (event) => {
         // 如果导航列表不显示，则不执行后续操作
-        if (!showNavList.value) return
+        if (!showNavigationList.value) return
 
         // 获取导航列表容器
-        const navListWrapper = document.querySelector('.nav-list-wrapper')
+        const navigationListWrapper = document.querySelector('.nav-list-wrapper')
         // 如果导航列表容器存在，且点击的不是导航列表容器内部元素
-        if (navListWrapper && !navListWrapper.contains(event.target)) {
+        if (navigationListWrapper && !navigationListWrapper.contains(event.target)) {
             // 隐藏导航列表
-            showNavList.value = false
+            showNavigationList.value = false
         }
     }
     // 组件挂载时添加监听滚动和点击事件
