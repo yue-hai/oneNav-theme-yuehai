@@ -79,7 +79,54 @@ const getLinkList = async (homeMethod, categoryList) => {
 
     // Promise.all 确保所有请求都完成后才继续执行
     await Promise.all(promises);
-    // 将分类目录列表保存到导航数据仓库中
-    navigationDataStore().navigationDataList = categoryList;
+    // 设置子父目录关系
+    setParentChild(categoryList);
 }
+
+/**
+ * 设置子父目录关系
+ * @param categoryList 原始的分类目录列表数据，是一个扁平的数组结构
+ */
+export const setParentChild = (categoryList) => {
+    /**
+     * 第一次遍历：将扁平数组转换为 Map 结构
+     * 1. reduce 方法接收两个参数：累加器函数和初始值 {}
+     * 2. map 作为累加器，收集所有分类项
+     * 3. 使用 id 作为 key，确保快速查找
+     * 4. 展开原对象(...item)，并初始化 children 数组
+     */
+    const categoryMap = categoryList.reduce((map, item) => {
+        map[item.id] = { ...item, children: [] };
+        return map;
+    }, {});
+
+    /**
+     * 第二次遍历：建立父子关系
+     * 1. 遍历原始数组
+     * 2. 对于每个非根节点(fid !== "0")
+     * 3. 通过 fid 快速找到父节点
+     * 4. 将当前节点添加到父节点的 children 数组中
+     */
+    categoryList.forEach((item) => {
+        if (item["fid"] !== "0") {
+            // 直接通过 Map 获取父节点，O(1) 的时间复杂度
+            const parent = categoryMap[item["fid"]];
+            // 如果找到父节点，则建立关系
+            if (parent) {
+                parent.children.push(categoryMap[item.id]);
+            }
+        }
+    });
+
+    /**
+     * 构建最终的树形结构，将设置好的导航数据保存到导航数据仓库中
+     * 1. filter 筛选出顶级节点(fid === "0")
+     * 2. map 转换为 Map 中的增强版对象(包含 children)
+     * 3. 得到最终的树形结构数据
+     */
+    navigationDataStore().navigationDataList = categoryList.filter(item => item["fid"] === "0")
+        .map(item => categoryMap[item.id]);
+}
+
+
 

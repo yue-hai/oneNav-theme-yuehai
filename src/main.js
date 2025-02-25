@@ -2,6 +2,8 @@
 import { createApp } from 'vue'
 // 从当前目录下的 App.vue 文件导入根组件 App
 import App from '@/App.vue'
+// 导入全局样式：fontawesome 图标样式
+import '@/assets/css/icon.scss'
 
 // 从 axios 库导入 axios，用于进行 HTTP 请求
 import axios from 'axios'

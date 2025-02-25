@@ -7,7 +7,7 @@
         <!-- 导航列表容器 -->
         <div class="nav-list-wrapper" v-show="showNavigationList">
             <!-- 导航列表 -->
-            <NavigationList />
+            <NavigationList :updateShowNavigationList="updateShowNavigationList"/>
         </div>
     </transition>
 </template>
@@ -33,24 +33,24 @@
      */
     // 控制导航列表是否显示
     const showNavigationList = ref(false)
-    // 监听鼠标滚轮事件，控制导航列表的显示和隐藏
+    /**
+     * 监听鼠标滚轮事件，控制导航列表的显示；隐藏事件由子组件触发
+     * @param event - 鼠标滚轮事件
+     */
     const handleScroll = (event) => {
         // 获取滚轮滚动的方向
-        const deltaY = event.deltaY
-        // 获取页面滚动的距离
-        const scrollTop = document.documentElement.scrollTop || document.body.scrollTop
-        // 判断滚轮滚动的方向是不是向下
+        const deltaY = event.deltaY;
+
+        // 判断滚轮滚动的方向；deltaY > 0 为向下滚动，< 0 为向上滚动
         if (deltaY > 0) {
-            // 向下滚动时显示 NavigationList
-            showNavigationList.value = true
-        } else if (deltaY < 0) {
-            // 向上滚动，且页面已回到顶部时隐藏 NavigationList
-            if (scrollTop === 0) {
-                showNavigationList.value = false
-            }
+            // 向下滚动时，显示 NavigationList，并重置顶部标志
+            showNavigationList.value = true;
         }
     }
-    // 监听点击事件，控制导航列表的显示和隐藏
+    /**
+     * 监听点击事件，控制导航列表的显示和隐藏
+     * @param event - 鼠标点击事件
+     */
     const handleClick = (event) => {
         // 如果导航列表不显示，则不执行后续操作
         if (!showNavigationList.value) return
@@ -68,11 +68,18 @@
         window.addEventListener('wheel', handleScroll)
         window.addEventListener('click', handleClick)
     })
-    // 组件销毁时移除监听事件
+    // 组件销毁时移除监听滚动和点击事件
     onBeforeUnmount(() => {
         window.removeEventListener('wheel', handleScroll)
         window.removeEventListener('click', handleClick)
     })
+    /**
+     * 更新导航列表的显示状态，由子组件调用
+     * @param newValue - 新的导航列表显示状态
+     */
+    const updateShowNavigationList = (newValue) => {
+        showNavigationList.value = newValue;
+    };
 </script>
 
 <style lang="less">
@@ -131,10 +138,7 @@ html {
     .nav-list-wrapper {
         position: fixed; // fixed：固定定位，相对于浏览器窗口定位
         width: 100%; // 宽度占满整个屏幕
-        height: 66vh; // 高度占据屏幕的 66%，即 2/3
-        bottom: 0; // 底部对齐
-        left: 0; // 左侧对齐
-        padding: 20px; // 内边距 20px
+        height: 75vh; // 高度占据屏幕的 75%
         background: rgba(255, 255, 255, 0.1); // 半透明背景
         backdrop-filter: blur(5px); // 毛玻璃效果
         box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.2); // 底部阴影

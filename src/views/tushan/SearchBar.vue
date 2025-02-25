@@ -315,6 +315,6 @@
 
 // 当 NavigationList 显示时，SearchBar 上移 5vh
 .search-move-up {
-    transform: translateY(-5vh); // 让 SearchBar 向上移动 5vh
+    transform: translateY(-10vh); // 让 SearchBar 向上移动 10vh
 }
 </style>
