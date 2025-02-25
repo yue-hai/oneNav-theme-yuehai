@@ -2,14 +2,14 @@
     <!-- 分类抽屉容器 -->
     <div class="drawer-container">
         <!-- 父级分类抽屉容器 -->
-        <div class="category-container" @click="toggleDrawer">
+        <div class="parent-container" @click="toggleDrawer">
             <!-- 左侧内容包装器，用于包裹分类图标和描述 -->
             <div class="left-content">
                 <i :class="['category-icon', category['font_icon']]"></i>
                 {{ category.description }}
             </div>
             <!-- 箭头图标 -->
-            <i :class="['category-arrow', 'fa', 'fa-chevron-down', { 'rotated': isOpen }]"></i>
+            <i :class="['parent-arrow', 'fa', 'fa-chevron-down', { 'rotated': isOpen }]"></i>
         </div>
 
         <!-- 子级目录动画容器；transition 是 Vue 提供的过渡动画组件 -->
@@ -122,7 +122,7 @@
     }
 
     // 父级分类抽屉样式
-    .category-container {
+    .parent-container {
         display: flex; // flex 表示弹性布局，子元素可以按照一定的比例分配空间
         justify-content: space-between; // 两端对齐
         align-items: center; // 垂直居中
@@ -137,7 +137,7 @@
         }
 
         // 箭头图标样式
-        .category-arrow {
+        .parent-arrow {
             font-size: 20px; // 字体大小 16px
             transition: transform 0.3s ease; // 添加过渡效果
 
