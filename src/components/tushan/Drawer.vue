@@ -126,10 +126,15 @@
         display: flex; // flex 表示弹性布局，子元素可以按照一定的比例分配空间
         justify-content: space-between; // 两端对齐
         align-items: center; // 垂直居中
-        padding: 15px 0; // 上下内边距 10px，左右内边距 0
+        padding: 15px 20px; // 上下内边距 10px，左右内边距 0
         font-size: 16px; // 字体大小 16px
         font-weight: bold; // 字体加粗
         cursor: pointer; // 鼠标悬停时显示小手
+
+        // 悬停时背景颜色改变
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.2); // 变浅的白色背景
+        }
 
         // 箭头图标样式
         .category-arrow {
@@ -152,12 +157,16 @@
             display: flex; // flex 表示弹性布局，子元素可以按照一定的比例分配空间
             justify-content: space-between; // 两端对齐
             align-items: center; // 垂直居中
-            margin-left: 20px; // 左外边距 20px，用于缩进
-            padding: 15px 0; // 上下内边距 10px，左右内边距 0
+            padding: 15px 0 15px 40px; // 上下内边距 10px，左右内边距 0
             font-size: 14px; // 字体大小 16px
             font-weight: bold; // 字体加粗
             font-style: italic; // 字体斜体
             cursor: pointer; // 鼠标悬停时显示小手
+
+            // 悬停时背景颜色改变
+            &:hover {
+                background-color: rgba(255, 255, 255, 0.2); // 变浅的白色背景
+            }
         }
     }
 

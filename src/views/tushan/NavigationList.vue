@@ -76,7 +76,7 @@
     .category-container {
         width: 200px; // 宽度 200px
         height: 100%;// 高度占满整个页面
-        padding: 10px 20px; // 内边距 20px
+        padding: 10px 0; // 上下内边距 10px，左右内边距 0
         background: rgba(255, 255, 255, 0.1); // 半透明背景
         user-select: none; // 不可复制
 
