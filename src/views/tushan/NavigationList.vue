@@ -78,6 +78,7 @@
         height: 100%;// 高度占满整个页面
         padding: 10px 0; // 上下内边距 10px，左右内边距 0
         background: rgba(255, 255, 255, 0.1); // 半透明背景
+        border-radius: 20px 0 0 0; // 圆角：左上、右上
         user-select: none; // 不可复制
 
         overflow-y: auto; /* 启用滚动 */
