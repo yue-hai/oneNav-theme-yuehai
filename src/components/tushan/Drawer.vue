@@ -40,7 +40,7 @@
      * 此处代码块用于引入组件需要的 API、传递的数据和方法、通用数据
      */
     // 引入 vue3 的响应式 API
-    import { toRefs, ref } from 'vue'
+    import { ref, toRefs } from 'vue'
     // 接收父组件传递的参数
     const props = defineProps(['category']);
     // 因为是响应式数据，所以使用 toRefs 将其解构，使其保持响应式
@@ -155,7 +155,6 @@
         // 子级目录列表样式
         .children-container {
             display: flex; // flex 表示弹性布局，子元素可以按照一定的比例分配空间
-            justify-content: space-between; // 两端对齐
             align-items: center; // 垂直居中
             padding: 15px 0 15px 40px; // 上下内边距 10px，左右内边距 0
             font-size: 14px; // 字体大小 16px

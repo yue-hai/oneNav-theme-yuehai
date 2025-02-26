@@ -3,15 +3,15 @@
     <div class="navigation-list">
         <!-- 遍历导航分类数据，使用 Drawer 组件展示分类抽屉 -->
         <div class="category-container" ref="categoryContainerRef">
-            <div class="drawer-list" v-for="navigationData in navigationDataList" :key="navigationData.id">
-                <Drawer :category="navigationData" />
+            <div class="drawer-list" v-for="category in navigationDataList" :key="category.id">
+                <Drawer :category="category" />
             </div>
         </div>
 
         <!-- 遍历导航链接数据，使用 LinkList 组件展示链接数据 -->
         <div class="link-container" ref="linkContainerRef">
-            <div class="link-list" v-for="navigationData in navigationDataList" :key="navigationData.id">
-                <LinkList :category="navigationData" />
+            <div class="link-category-list" v-for="category in navigationDataList" :key="category.id">
+                <LinkList :category="category" />
             </div>
         </div>
     </div>
@@ -92,11 +92,12 @@
     onMounted(() => {
         // 给导航分类容器添加滚动事件监听
         if (categoryContainerRef.value) {
-            categoryContainerRef.value.addEventListener('wheel', handleCategoryScroll);
+            // 使用 { passive: true } 优化滚动性能：告诉浏览器不需要阻止默认事件
+            categoryContainerRef.value.addEventListener('wheel', handleCategoryScroll, { passive: true });
         }
         // 给导航链接容器添加滚动事件监听
         if (linkContainerRef.value) {
-            linkContainerRef.value.addEventListener('wheel', handleLinkScroll);
+            linkContainerRef.value.addEventListener('wheel', handleLinkScroll, { passive: true });
         }
     })
     // 组件销毁时移除监听事件
@@ -123,8 +124,7 @@
         width: 200px; // 宽度 200px
         height: 100%;// 高度占满整个页面
         padding: 10px 0; // 上下内边距 10px，左右内边距 0
-        background: rgba(255, 255, 255, 0.1); // 半透明背景
-        border-radius: 20px 0 0 0; // 圆角：左上、右上
+        border-radius: 20px 0 0 0; // 圆角：左上
         user-select: none; // 不可复制
         overflow-y: auto; // 启用滚动
         overflow-x: hidden;// 隐藏水平滚动条
@@ -156,11 +156,12 @@
         }
     }
 
+    // 导航链接容器样式
     .link-container {
         flex: 1; // 占满剩余空间
         padding: 10px 0 10px 10px; // 上下内边距 10px，左右内边距 10px
-        background: rgba(255, 255, 255, 0.1); // 半透明背景
-        border-radius: 0 20px 0 0; // 圆角：右上、右下
+        background: rgba(255, 255, 255, 0.2); // 半透明背景
+        border-radius: 0 20px 0 0; // 圆角：右上
         overflow-y: auto; // 启用滚动
         overflow-x: hidden; // 隐藏水平滚动条
         overscroll-behavior: contain; // 防止滚动穿透
@@ -185,6 +186,11 @@
         // 设置当鼠标悬停在滚动条滑块上时的样式
         &::-webkit-scrollbar-thumb:hover {
             box-shadow: 8px 0 0 rgba(255, 255, 255, 0.5) inset; // 悬停时的阴影效果
+        }
+
+        // 给最后一个链接容器增加下外边距，避免底部内容被遮挡
+        .link-category-list:last-child {
+            margin-bottom: 15px;
         }
     }
 }

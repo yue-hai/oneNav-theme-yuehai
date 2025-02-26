@@ -8,7 +8,7 @@
                 <img :src="currentEngine.icon" :alt="currentEngine.name" />
             </div>
             <!-- 搜索输入框 -->
-            <input v-model="searchText" placeholder="搜一搜？" @keyup.enter="handleSearch" @focus="showSuggestions = true"/>
+            <input id="search-box" v-model="searchText" placeholder="搜一搜？" @keyup.enter="handleSearch" @focus="showSuggestions = true"/>
             <!-- 搜索按钮 -->
             <div class="search-confirm" @click="handleSearch">
                 <img :src="searchIcon" alt="search" />
