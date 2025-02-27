@@ -1,4 +1,4 @@
 {
-    "apiBaseUrl": "http://127.0.0.1:80",
+    "apiBaseUrl": "http://127.0.0.1:8080",
     "token": "9fab390136fcf39b97313ba1660e8893"
 }

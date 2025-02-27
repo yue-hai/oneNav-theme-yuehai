@@ -8,9 +8,32 @@
 
 ## 2、主题
 
-1. tushan 主题样式仿照：https://github.com/tsxcw/oneNav
+### ①、tushan
 
-# 二、命令
+1. tushan 主题样式仿照：https://github.com/tsxcw/oneNav
+2. 改动：
+   1. 分类左侧目录列表，点击可使右侧链接列表滚动到指定位置
+   2. 链接图标先获取 oneNav 中配置的，如果没有配置，再自动获取
+   3. 链接图标自动获取可能失败，此时建议手动在 oneNav 中配置
+
+![仿tushan主题截图.png](doc/images/仿tushan主题截图.png)
+
+### ②、
+
+# 二、配置修改
+
+## 1、服务器配置文件 server_config.json
+
+1. 位置：/public/server_config.json
+2. 配置项：
+3. `apiBaseUrl`：oneNav 后端接口地址，如：http://89.164.23.214:8080
+4. `token`：oneNav 后端接口的 token，用于请求接口时的身份验证
+
+![oneNav获取token.png](doc/images/oneNav获取token.png)
+
+## 2、
+
+# 三、开发命令
 
 1. 安装依赖
 
@@ -30,7 +53,7 @@ npm run dev
 npm run build
 ```
 
-# 三、依赖：
+# 四、依赖：
 
 1. 常用依赖
    1. less 是一种动态样式语言，可以方便地为网页增加复杂的样式
@@ -43,7 +66,7 @@ npm run build
 npm install less-loader vue-router@4 pinia pinia-plugin-persist axios
 ```
 
-# 四、nginx 配置
+# 五、nginx 配置
 
 ## 1、nginx-proxy-manager 部署
 
@@ -53,7 +76,7 @@ npm install less-loader vue-router@4 pinia pinia-plugin-persist axios
    2. 原镜像是：`jc21/nginx-proxy-manager`，此处使用的是汉化版
 3. 使用 docker 部署：
    1. `-d`：后台运行容器并返回容器 ID，也即启动守护式容器(后台运行)
-   2. `-p`：指定端口映射；因为家庭宽带的 80、443 端口一般都是被封的，所以这里一般修改为其他端口
+   2. `-p`：指定端口映射
       1. `81`：nginx-proxy-manager 的 web 访问端口
       2. `80`：http 代理端口，访问代理的 http 地址时，需要加上这个端口
       3. `443`：https 代理端口，访问代理的 https 地址时，需要加上这个端口
@@ -87,6 +110,8 @@ chishin/nginx-proxy-manager-zh:latest
 
 > 本次代理域名是 ip + 路径，因为阿里云没有备案不能被解析为域名
 
+### ①、基础设置
+
 1. 进入 nginx-proxy-manager 的管理后台：[http://127.0.0.1:81](http://127.0.0.1:81)
 2. 点击主机 -> 代理服务 -> 添加代理服务
 
@@ -101,12 +126,16 @@ chishin/nginx-proxy-manager-zh:latest
 
 ![添加代理配置.png](doc/images/添加代理配置.png)
 
-4. 点击自定义位置：
-   1. 定义位置：`/oneNav`，根据自定需求更改
+### ②、添加自定义位置：`/oneNav`
+
+> 该位置用于访问 oneNav 主题的前端页面
+
+1. 点击自定义位置：
+   1. 定义位置：`/oneNav`
    2. 协议：http
    3. 转发主机/IP：`127.0.0.1`
    4. 转发端口：`80`
-5. 然后点击定义位置后的齿轮按钮，在输入框中输入以下内容：
+2. 然后点击定义位置后的齿轮按钮，在输入框中输入以下内容：
    1. `location /oneNav {}`：匹配访问路径 `/oneNav` 的请求
    2. `alias /data/web/oneNav-theme-yuehai;`：alias 设定了路径映射，表示 当请求 `/oneNav/xxx` 时，Nginx 实际访问 `/data/web/oneNav-theme-yuehai/xxx`
    3. `index index.html;`：当访问 `/oneNav/` 目录时，默认返回 `index.html`
@@ -118,14 +147,18 @@ location /oneNav {
 }
 ```
 
-![设置路径oneNav.png](doc/images/设置路径oneNav.png)
+![添加自定义位置oneNav.png](doc/images/添加自定义位置oneNav.png)
 
-7. 点击添加位置，设置第二个自定义位置：
-   1. 定义位置：`/oneNavApi`，根据自定需求更改
+### ③、添加自定义位置：`/oneNavApi`
+
+> 该位置用于访问 oneNav 主题的后端接口
+
+1. 点击添加位置，设置第二个自定义位置：
+   1. 定义位置：`/oneNavApi`
    2. 协议：http
    3. 转发主机/IP：部署 oneNav 的服务器 ip
    4. 转发端口：部署 oneNav 的服务器端口
-8. 然后点击定义位置后的齿轮按钮，在输入框中输入以下内容：
+2. 然后点击定义位置后的齿轮按钮，在输入框中输入以下内容：
    1. `proxy_pass http://oneNav服务器Ip:oneNav服务器端口/;`：将请求转发到指定的后端服务器，即部署 oneNav 的服务器
    2. `proxy_set_header Host $host;`：设置 Host 请求头为客户端请求时的主机名
    3. `proxy_set_header X-Real-IP $remote_addr;`：设置 X-Real-IP 请求头为客户端的真实 IP
@@ -142,9 +175,36 @@ location /oneNavApi/ {
 }
 ```
 
-![设置路径oneNavApi.png](doc/images/设置路径oneNavApi.png)
+![添加自定义位置oneNavApi.png](doc/images/添加自定义位置oneNavApi.png)
 
-9. 设置完毕后，点击保存即可
-10. 最后访问：http://127.0.0.1/oneNav
+### ④、添加自定义位置：`/faviconkit`
+
+> 该位置用于访问获取网站图标的 api 接口
+
+1. 点击添加位置，设置第三个自定义位置：
+   1. 定义位置：`/faviconkit`
+   2. 协议：https
+   3. 转发主机/IP：`api.faviconkit.com`
+   4. 转发端口：`80`
+2. 然后点击定义位置后的齿轮按钮，在输入框中输入以下内容：
+   1. `proxy_pass https://api.faviconkit.com/;`：将请求转发到指定的后端服务器，即 api.faviconkit.com
+   2. `proxy_set_header Host api.faviconkit.com;`：设置 Host 请求头为 api.faviconkit.com，否则 api.faviconkit.com 会返回 403
+
+```nginx
+location /faviconkit/ {
+    proxy_pass https://api.faviconkit.com/;
+    proxy_set_header Host api.faviconkit.com;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}
+```
+
+![添加自定义位置faviconkit.png](doc/images/添加自定义位置faviconkit.png)
+
+### ⑤、保存配置
+
+1. 设置完毕后，点击保存即可
+2. 最后访问：http://127.0.0.1/oneNav
 
 

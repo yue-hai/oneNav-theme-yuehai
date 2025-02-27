@@ -38,7 +38,7 @@
     // 引入 Drawer 分类抽屉组件
     import Drawer from '@/components/tushan/Drawer.vue';
     // 引入 LinkList 链接列表组件
-    import LinkList from "@/views/tushan/LinkList.vue";
+    import LinkList from "@/components/tushan/LinkList.vue";
 
 
     /**

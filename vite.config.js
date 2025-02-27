@@ -22,7 +22,7 @@ export default defineConfig({
             // 将 /oneNavApi 开头的请求转发到 oneNav 服务器
             '/oneNavApi': {
                 // 目标服务器地址，代理将请求转发到该地址
-                target: 'http://127.0.0.1:80',
+                target: 'http://127.0.0.1:8080',
                 // 重写请求路径，将 /api 前缀去掉，转发时路径为原始路径；例如：/api/data/findDuplicate -> /data/findDuplicate
                 rewrite: (path) => path.replace(/^\/oneNavApi/, ''),
                 // 更改请求的源站，伪装为目标服务器发送请求，解决跨域问题
