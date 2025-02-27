@@ -2,7 +2,7 @@
     <!-- 分类抽屉容器 -->
     <div class="drawer-container">
         <!-- 父级分类抽屉容器 -->
-        <div class="parent-container" @click="toggleDrawer">
+        <div class="parent-container" @click="toggleDrawer(); emit('clickCategoryScrollLink', 'category', category.id);">
             <!-- 左侧内容包装器，用于包裹分类图标和描述 -->
             <div class="left-content">
                 <i :class="['category-icon', category['font_icon']]"></i>
@@ -23,7 +23,7 @@
             <!-- 子级目录容器；使用 v-if，避免 v-show 影响 height 计算 -->
             <div v-if="isOpen" class="children-wrapper">
                 <!-- 遍历子级目录数据 -->
-                <div v-for="children in category.children" :key="children.id" class="children-container">
+                <div v-for="children in category.children" :key="children.id" class="children-container" @click.stop="emit('clickCategoryScrollLink', 'children-category', children.id);">
                     <!-- 左侧内容包装器，用于包裹子级分类图标和描述 -->
                     <div class="left-content">
                         <i :class="['category-icon', children['font_icon']]"></i>
@@ -40,12 +40,16 @@
      * 此处代码块用于引入组件需要的 API、传递的数据和方法、通用数据
      */
     // 引入 vue3 的响应式 API
-    import { ref, toRefs } from 'vue'
+    import { ref, toRefs, defineEmits } from 'vue'
     // 接收父组件传递的参数
     const props = defineProps(['category']);
     // 因为是响应式数据，所以使用 toRefs 将其解构，使其保持响应式
     const { category } = toRefs(props);
-
+    /**
+     * 创建 emit 方法，用于向父组件发送事件
+     * @type {((...args: any[]) => any) | ((evt: string, ...args: Record<string, any>[string]) => void)}
+     */
+    const emit = defineEmits();
 
     /**
      * 此处代码块用于定义子分类目录的显示和隐藏逻辑、动画效果

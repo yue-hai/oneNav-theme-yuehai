@@ -24,9 +24,9 @@ export {
 const getApiRequest = async ({
     homeMethod,
     url,
-    urlParams = {},
-    handler = requestHandler(true, serverConfigStore().token),
-    responseType = 'json'
+    urlParams,
+    handler,
+    responseType
 }) => {
     // 解构赋值，获取父组件传递的方法
     const { closeErrorTip } = homeMethod;
@@ -36,12 +36,12 @@ const getApiRequest = async ({
     try {
         // 发送 get 请求；使用 async/await 语法糖，简化 Promise 的使用，返回响应数据
         return await axios.get(url, {
-            // 设置请求头，传递验证信息
-            headers: handler,
             // 设置请求参数，传递 URL 参数
-            params: urlParams,
+            params: urlParams ?? {},
+            // 设置请求头，传递验证信息
+            headers: handler ?? requestHandler(true, serverConfigStore().token ?? '') ?? undefined,
             // 设置响应类型，传递 responseType
-            responseType: responseType
+            responseType: responseType ?? 'json'
         });
     } catch (error) {
         // 抛出错误

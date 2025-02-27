@@ -1,16 +1,20 @@
 <template>
     <!-- 导航列表组件 -->
     <div class="navigation-list">
-        <!-- 遍历导航分类数据，使用 Drawer 组件展示分类抽屉 -->
+        <!-- 导航分类容器，用于展示分类抽屉、设置滚动事件 -->
         <div class="category-container" ref="categoryContainerRef">
+            <!-- 遍历导航分类数据 -->
             <div class="drawer-list" v-for="category in navigationDataList" :key="category.id">
-                <Drawer :category="category" />
+                <!-- 使用 Drawer 组件展示分类数据，并传递点击分类滚动链接列表方法 -->
+                <Drawer :category="category" @clickCategoryScrollLink="clickCategoryScrollLink"/>
             </div>
         </div>
 
-        <!-- 遍历导航链接数据，使用 LinkList 组件展示链接数据 -->
+        <!-- 导航链接容器，用于展示链接列表、设置滚动事件 -->
         <div class="link-container" ref="linkContainerRef">
+            <!-- 遍历导航链接数据 -->
             <div class="link-category-list" v-for="category in navigationDataList" :key="category.id">
+                <!-- 使用 LinkList 组件展示链接数据 -->
                 <LinkList :category="category" />
             </div>
         </div>
@@ -111,6 +115,32 @@
             linkContainerRef.value.removeEventListener('wheel', handleLinkScroll);
         }
     })
+
+
+    /**
+     * 此处代码块用于处理点击分类和子分类时链接列表的滚动
+     */
+    /**
+     * 点击分类时，滚动到对应的分类链接列表
+     * @param type - 分类类型
+     * @param id - 分类 ID
+     */
+    const clickCategoryScrollLink = (type, id) => {
+        // 根据分类类型和 ID，拼接目标元素的 ID
+        const targetId = type === 'category' ? `category-${id}` : `children-category-${id}`;
+        // 根据目标元素 ID 获取目标元素
+        const element = document.getElementById(targetId);
+        // 判断目标元素是否存在，以及导航链接容器是否存在
+        if (element && linkContainerRef.value) {
+            // 使用 scrollTo 方法滚动到目标元素
+            linkContainerRef.value.scrollTo({
+                // 滚动到目标元素的左上角
+                top: element.offsetTop,
+                // 滚动方式：平滑滚动
+                behavior: 'smooth'
+            });
+        }
+    };
 </script>
 
 <style scoped lang="less">

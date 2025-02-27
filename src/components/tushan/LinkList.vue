@@ -1,6 +1,6 @@
 <template>
     <!-- 父级分类 -->
-    <div class="parent-container">
+    <div class="parent-container" :id="`category-${category.id}`">
         <!-- 左侧内容包装器，用于包裹分类图标和描述 -->
         <div class="left-content">
             <i :class="['category-icon', category['font_icon']]"></i>
@@ -26,7 +26,7 @@
     </div>
 
     <!-- 子级分类 -->
-    <div class="children-container" v-for="children in category.children" :key="children.id">
+    <div class="children-container" v-for="children in category.children" :key="children.id" :id="`children-category-${children.id}`">
         <!-- 左侧内容包装器，用于包裹子级分类图标和描述 -->
         <div class="left-content">
             <i :class="['category-icon', children['font_icon']]"></i>
