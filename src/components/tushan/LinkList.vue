@@ -15,7 +15,7 @@
                     <!-- 链接图标，当获取到了网站图标时，使用网站图标；当没有获取到网站图标时，使用默认图标 -->
                     <img
                         class="link-icon"
-                        :src="linkIconList[link.id] || readImage('tushan/link/链接.svg')"
+                        :src="linkIconList[link.id] || readImage('tushan/link/链接地球.svg')"
                         :alt="link.title"
                     />
                 </div>
@@ -41,7 +41,7 @@
                     <!-- 链接图标，当获取到了网站图标时，使用网站图标；当没有获取到网站图标时，使用默认图标 -->
                     <img
                         class="link-icon"
-                        :src="linkIconList[link.id] || readImage('tushan/link/链接.svg')"
+                        :src="linkIconList[link.id] || readImage('tushan/link/链接地球.svg')"
                         :alt="link.title"
                     />
                 </div>
