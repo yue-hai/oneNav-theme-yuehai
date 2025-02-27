@@ -19,6 +19,7 @@ export default defineConfig({
         port: 81,
         // 配置代理服务器，解决开发环境中的跨域问题
         proxy: {
+            // 将 /oneNavApi 开头的请求转发到 oneNav 服务器
             '/oneNavApi': {
                 // 目标服务器地址，代理将请求转发到该地址
                 target: 'http://127.0.0.1:80',
@@ -26,6 +27,14 @@ export default defineConfig({
                 rewrite: (path) => path.replace(/^\/oneNavApi/, ''),
                 // 更改请求的源站，伪装为目标服务器发送请求，解决跨域问题
                 changeOrigin: true
+            },
+            // 将 /faviconkit 开头的请求转发到 Favicon Kit api
+            '/faviconkit': {
+                target: 'https://api.faviconkit.com',
+                rewrite: (path) => path.replace(/^\/faviconkit/, ''),
+                changeOrigin: true,
+                // 忽略 SSL 证书验证，解决 SSL 证书问题
+                secure: false
             }
         }
     },

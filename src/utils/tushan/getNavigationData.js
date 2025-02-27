@@ -28,7 +28,7 @@ const getCategoryList = async (homeMethod) => {
             urlParams: {c: "api", method: "category_list", page: "1", limit: "99999"},
         });
         // 调用获取链接列表
-        await getLinkList(homeMethod, response.data);
+        await getLinkList(homeMethod, response.data.data);
     } catch {
         // 如果请求失败，打印错误信息
         console.log("获取分类目录数据失败");
@@ -64,7 +64,7 @@ const getLinkList = async (homeMethod, categoryList) => {
                 urlParams: { c: "api", method: "q_category_link", category_id: `${category.id}`, page: "1", limit: "99999" },
             });
             // 将获取到的链接列表保存到对应的分类对象中
-            category.link_list = response.data;
+            category.link_list = response.data.data;
         } catch (error) {
             // 如果请求失败，打印错误信息
             console.log(`${category.name} 分类下的链接列表获取失败：`, error);

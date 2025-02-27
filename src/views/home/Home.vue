@@ -83,7 +83,7 @@
                 urlParams: { c: "api", method: "check_login" },
             });
             // 获取登录信息成功，调用登录成功回调函数
-            loginSuccessCallback(loginInfo)
+            loginSuccessCallback(loginInfo.data)
         } catch (error) {
             console.error('配置加载失败：', error);
             // 获取登录信息失败，调用登录失败回调函数

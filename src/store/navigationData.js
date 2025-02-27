@@ -29,6 +29,8 @@ export const navigationDataStore = defineStore('navigationData', {
         return {
             // 导航数据
             navigationDataList: [],
+            // 链接数据
+            linkIconList: {},
         }
     },
     /**

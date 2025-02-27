@@ -19,12 +19,14 @@ export {
  * @param url 请求地址
  * @param urlParams URL 参数；默认为空
  * @param handler 额外的请求头；如果传入了额外的请求头，则使用传入的请求头；否则使用默认的请求头
+ * @param responseType 响应类型；默认为 json
  */
 const getApiRequest = async ({
     homeMethod,
     url,
     urlParams = {},
-    handler = requestHandler(true, serverConfigStore().token)
+    handler = requestHandler(true, serverConfigStore().token),
+    responseType = 'json'
 }) => {
     // 解构赋值，获取父组件传递的方法
     const { closeErrorTip } = homeMethod;
@@ -32,15 +34,15 @@ const getApiRequest = async ({
     closeErrorTip();
 
     try {
-        // 发送 get 请求；使用 async/await 语法糖，简化 Promise 的使用
-        const response = await axios.get(url, {
+        // 发送 get 请求；使用 async/await 语法糖，简化 Promise 的使用，返回响应数据
+        return await axios.get(url, {
             // 设置请求头，传递验证信息
             headers: handler,
             // 设置请求参数，传递 URL 参数
-            params: urlParams
+            params: urlParams,
+            // 设置响应类型，传递 responseType
+            responseType: responseType
         });
-        // 返回响应数据
-        return response.data;
     } catch (error) {
         // 抛出错误
         throw error;

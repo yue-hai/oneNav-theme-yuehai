@@ -46,6 +46,7 @@ const readImage = (path) => {
         const otherPath = pathList[1];
         // 判断子目录名称
         switch (startPath) {
+            // 读取 tushan 目录下的图片资源
             case 'tushan':
                 return getTushanUrl(otherPath);
             // 可以在这里不断添加新的子目录
@@ -76,9 +77,13 @@ const getTushanUrl = (path) => {
         const otherPath = pathList[1];
         // 判断子目录名称
         switch (startPath) {
-            // 读取 tushan 目录下的图片资源
+            // 读取 tushan/searchBar 目录下的图片资源
             case 'searchBar':
                 return new URL(`../assets/images/tushan/searchBar/${otherPath}`, import.meta.url).href;
+            // 读取 tushan/link 目录下的图片资源
+            case 'link':
+                return new URL(`../assets/images/tushan/link/${otherPath}`, import.meta.url).href;
+            // 可以在这里不断添加新的子目录
         }
     } else {
         // 路径中不包含 /，直接返回图片资源路径
