@@ -10,6 +10,18 @@
             <NavigationList :updateShowNavigationList="updateShowNavigationList"/>
         </div>
     </transition>
+
+    <!-- 版权信息 -->
+    <span class="copyright-info" v-show="!showNavigationList">
+        <!-- 版权信息内容 -->
+        © {{ new Date().getFullYear() }} Powered by
+        <!-- OneNav 项目地址 -->
+        <a class="onenav-github" href="https://github.com/helloxz/onenav" target="_blank" title="OneNav 项目地址">OneNav</a>
+        <!-- 箭头图标 -->
+        <i class="copyright-info-arrow fa fa-long-arrow-right"></i>
+        <!-- 后台管理地址 -->
+        <a class="onenav-backstage" :href="`${serverConfigStore().apiBaseUrl}/index.php?c=admin`" target="_blank" title="OneNav 后台管理地址">log in</a>
+    </span>
 </template>
 
 <script setup>
@@ -17,6 +29,8 @@
      * 此处代码块用于引入组件需要的 API、传递的数据和方法、通用数据
      */
     import { ref, onMounted, onBeforeUnmount } from 'vue'
+    // 引入 serverConfig 仓库，用于获取服务器配置
+    import { serverConfigStore } from "@/store/serverConfig.js";
 
 
     /**
@@ -65,7 +79,7 @@
     }
     // 组件挂载时添加监听滚动和点击事件
     onMounted(() => {
-        window.addEventListener('wheel', handleScroll)
+        window.addEventListener('wheel', handleScroll, { passive: true })
         window.addEventListener('click', handleClick)
     })
     // 组件销毁时移除监听滚动和点击事件
@@ -144,6 +158,33 @@ html {
         box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.2); // 底部阴影
         border-radius: 20px 20px 0 0; // 圆角：左上、右上
         z-index: 999; // 设置 z-index 为 999，确保在其他元素之上
+    }
+
+    // 版权信息样式
+    .copyright-info {
+        position: fixed; // fixed：固定定位，相对于浏览器窗口定位
+        bottom: 8px; // 距离底部 8px
+        left: 50%; // 距离左侧 50%，即水平居中
+        transform: translateX(-50%); // 水平居中
+        color: rgba(255, 255, 255, 0.5); // 半透明白色
+        font-size: 13px; // 字体大小 13px
+        font-weight: 500; // 字体粗细 500
+        text-align: center; // 文本居中
+
+        // 版权信息链接样式
+        .onenav-github, .onenav-backstage {
+            color: inherit; // 继承父级颜色
+            text-decoration: none; // 移除链接下划线
+        }
+        // 版权信息链接悬停样式
+        .onenav-github:hover, .onenav-backstage:hover {
+            color: brown; // 悬停时字体颜色变为棕色
+        }
+
+        // 版权信息内容的箭头样式
+        .copyright-info-arrow {
+            padding: 0 5px; // 左右内边距 5px，和文字之间留出一定的间距
+        }
     }
 }
 </style>
