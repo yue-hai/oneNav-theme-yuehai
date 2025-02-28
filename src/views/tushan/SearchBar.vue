@@ -44,7 +44,7 @@
     import { ref, watch, onUnmounted } from 'vue'
     // 接收父组件传递的参数
     const { isNavigationVisible } = defineProps(['isNavigationVisible']);
-    // 引入 navigationData 仓库，用于读取导航数据
+    // 引入 cacheTushanStore 仓库，用于读取和保存用户设置
     import { cacheTushanStore } from "@/store/tushan/cacheTushan.js";
     // 引入静态数据
     import { tushanStaticData } from '@/data/tushanStaticData.js';
@@ -319,6 +319,7 @@
 
 // 当 NavigationList 显示时，SearchBar 上移 5vh
 .search-move-up {
-    transform: translateY(-10vh); // 让 SearchBar 向上移动 10vh
+    // 让 SearchBar 向上移动 10vh
+    transform: translateY(-10vh);
 }
 </style>

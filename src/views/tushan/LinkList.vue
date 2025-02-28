@@ -9,19 +9,8 @@
 
         <!-- 链接列表，显示在父级分类下方 -->
         <div class="link-items">
-            <a class="link-item" v-for="link in category.link_list" :key="link.id" :href="link.url" target="_blank" :title="link.title">
-                <!-- 链接图标容器-->
-                <div class="link-icon-content">
-                    <!-- 链接图标，当获取到了网站图标时，使用网站图标；当没有获取到网站图标时，使用默认图标 -->
-                    <img
-                        class="link-icon"
-                        :src="linkIconList[link.id] || readImage('tushan/link/链接地球.svg')"
-                        :alt="link.title"
-                    />
-                </div>
-                <!-- 链接名称 -->
-                <span class="link-name">{{ link.title }}</span>
-            </a>
+            <!-- 遍历父级分类的链接列表 -->
+            <LinkItem v-for="link in category.link_list" :key="link.id" :link="link" @click.stop="handleClickLink(link)"/>
         </div>
     </div>
 
@@ -35,19 +24,8 @@
 
         <!-- 链接列表，显示在父级分类下方 -->
         <div class="link-items">
-            <a class="link-item" v-for="link in children.link_list" :key="link.id" :href="link.url" target="_blank" :title="link.title">
-                <!-- 链接图标容器 -->
-                <div class="link-icon-content">
-                    <!-- 链接图标，当获取到了网站图标时，使用网站图标；当没有获取到网站图标时，使用默认图标 -->
-                    <img
-                        class="link-icon"
-                        :src="linkIconList[link.id] || readImage('tushan/link/链接地球.svg')"
-                        :alt="link.title"
-                    />
-                </div>
-                <!-- 链接名称 -->
-                <span class="link-name">{{ link.title }}</span>
-            </a>
+            <!-- 遍历子级分类的链接列表 -->
+            <LinkItem v-for="link in children.link_list" :key="link.id" :link="link" @click.stop="handleClickLink(link)"/>
         </div>
     </div>
 
@@ -59,8 +37,10 @@
      */
     // 引入 vue3 的响应式 API
     import { inject, toRefs, onMounted, watch } from 'vue'
-    // 使用 inject 接收父组件使用 provide 提供的方法
+    // 使用 inject 接收父组件使用 provide 提供的方法和数据
     const homeMethod = inject('homeMethod');
+    // 使用 inject 接收父组件使用 provide 提供的方法和数据
+    const { showNavigationList } = inject('showNavigationList');
     // 接收父组件传递的参数
     const props = defineProps(['category']);
     // 因为是响应式数据，所以使用 toRefs 将其解构，使其保持响应式
@@ -69,14 +49,22 @@
     import { serverConfigStore } from "@/store/serverConfig.js";
     // 引入 navigationData 仓库，用于读取导航数据
     import { navigationDataStore } from "@/store/navigationData.js";
+    // 引入 cacheTushanStore 仓库，用于读取和保存用户设置
+    import { cacheTushanStore } from "@/store/tushan/cacheTushan.js";
     // 引入 pinia 转换，将仓库转换为响应式变量
     import { storeToRefs } from "pinia";
     // 使用 storeToRefs 将仓库转换为响应式变量，方便在模板中使用
     const { linkIconList } = storeToRefs(navigationDataStore());
+    const { cacheLinkList } = storeToRefs(cacheTushanStore());
     // 引入 API 请求工具类
     import { getApiRequest } from '@/utils/apiRequest.js';
-    // 引入资源读取工具，用于读取图片资源
-    import { readImage } from '@/utils/resourceReader.js';
+
+
+    /**
+     * 此处代码块用于引入组件
+     */
+    // 引入 LinkItem 链接项组件
+    import LinkItem from "@/components/tushan/LinkItem.vue";
 
 
     /**
@@ -179,6 +167,33 @@
         // 深度监听，确保监听到 category 内部数据的变化
         { deep: true }
     );
+
+
+    /**
+     * 此处代码块用于定义点击链接的事件处理逻辑
+     */
+    /**
+     * 点击链接时，将链接添加到缓存中
+     */
+    const handleClickLink = (link) => {
+        // 判断要添加的链接是否已经存在，如果不存在则添加，如果存在则将其移动到第一个位置
+        const index = cacheLinkList.value.findIndex(item => item.url === link.url);
+        if (index !== -1) {
+            // 如果已经存在，则将其移动到第一个位置
+            cacheLinkList.value.splice(index, 1);
+        }
+        // 将链接添加到第一个位置
+        cacheLinkList.value.unshift(link);
+
+        // 判断缓存中的链接数量是否超过 10 个
+        if (cacheLinkList.value.length > 10) {
+            // 如果超过 10 个，则删除第 11 个及以后的链接
+            cacheLinkList.value.splice(10);
+        }
+
+        // 关闭导航列表
+        showNavigationList.value = false;
+    };
 </script>
 
 <style scoped lang="less">
@@ -217,52 +232,5 @@
     flex-wrap: wrap; // 允许链接项换行
     gap: 15px; // 设置链接项间距
     justify-content: flex-start; // 使所有子元素左对齐
-
-    // 单个链接项
-    .link-item {
-        display: flex; // flex 表示弹性布局，子元素可以按照一定的比例分配空间
-        width: 80px; // 设置宽度
-        flex-direction: column; // 设置主轴方向为垂直方向
-        align-items: center; // 垂直居中
-        color: inherit; // 继承父级颜色
-        text-decoration: none; // 移除链接下划线
-
-        // 圆形图标容器
-        .link-icon-content {
-            display: flex; // flex 表示弹性布局，子元素可以按照一定的比例分配空间
-            width: 50px; // 设置宽度为 50px
-            height: 50px; // 设置高度 50px
-            align-items: center;// 垂直居中
-            justify-content: center; // 水平居中
-            border-radius: 50%; // 设置圆角，使其呈现圆形
-            background: azure; // 设置背景颜色
-            font-size: 20px; // 字体大小 20px
-            overflow: hidden; // 隐藏溢出内容，防止溢出影响布局
-            transition: transform 0.2s ease-in-out; // 添加过渡效果，缓动效果为 ease-in-out，即先慢后快
-
-            // 图标样式
-            .link-icon {
-                width: 50%;
-                height: 50%;
-            }
-        }
-        // 悬停效果
-        &:hover .link-icon-content {
-            transform: scale(1.1); // 悬停时整体放大 10%
-            box-shadow: 0 0 10px rgba(255, 255, 255, 1); // 白色半透明阴影，增强视觉效果
-        }
-
-        // 链接名称
-        .link-name {
-            max-width: 80px; // 最大宽度 80px
-            margin-top: 5px; // 上外边距 5px，和图标之间留出一定的间距
-            font-size: 12px; // 字体大小 16px
-            font-weight: normal; // normal 表示正常字体，不加粗
-            font-style: normal; // normal 表示正常字体，不斜体
-            white-space: nowrap; // 不换行
-            overflow: hidden; // 隐藏溢出内容
-            text-overflow: ellipsis; // 超出部分显示省略号
-        }
-    }
 }
 </style>

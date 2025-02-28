@@ -16,7 +16,7 @@
      */
     // 引入 vue3 的响应式 API
     import { ref, inject, onMounted, onUnmounted } from 'vue';
-    // 使用 inject 接收父组件使用 provide 提供的方法
+    // 使用 inject 接收父组件使用 provide 提供的方法和数据
     const { closeErrorTip } = inject('homeMethod');
     // 接收父组件传递的参数
     const { errorTipData } = defineProps(['errorTipData']);

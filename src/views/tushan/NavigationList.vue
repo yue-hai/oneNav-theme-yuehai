@@ -4,9 +4,9 @@
         <!-- 导航分类容器，用于展示分类抽屉、设置滚动事件 -->
         <div class="category-container" ref="categoryContainerRef">
             <!-- 遍历导航分类数据 -->
-            <div class="drawer-list" v-for="category in navigationDataList" :key="category.id">
-                <!-- 使用 Drawer 组件展示分类数据，并传递点击分类滚动链接列表方法 -->
-                <Drawer :category="category" @clickCategoryScrollLink="clickCategoryScrollLink"/>
+            <div class="category-list" v-for="category in navigationDataList" :key="category.id">
+                <!-- 使用 CategoryDrawer 组件展示分类数据，并传递点击分类滚动链接列表方法 -->
+                <CategoryDrawer :category="category" @clickCategoryScrollLink="clickCategoryScrollLink"/>
             </div>
         </div>
 
@@ -25,9 +25,9 @@
     /**
      * 此处代码块用于引入组件需要的 API、传递的数据和方法、通用数据
      */
-    import { ref, onMounted, onBeforeUnmount } from 'vue'
-    // 接收父组件传递的参数
-    const { updateShowNavigationList } = defineProps(['updateShowNavigationList']);
+    import { ref, inject, onMounted, onBeforeUnmount } from 'vue'
+    // 使用 inject 接收父组件使用 provide 提供的方法和数据
+    const { showNavigationList } = inject('showNavigationList');
     // 引入 navigationData 仓库，用于读取导航数据
     import { navigationDataStore } from "@/store/navigationData.js";
     // 引入 pinia 转换，将仓库转换为响应式变量
@@ -39,10 +39,10 @@
     /**
      * 此处代码块用于引入组件
      */
-    // 引入 Drawer 分类抽屉组件
-    import Drawer from '@/components/tushan/Drawer.vue';
+    // 引入 CategoryDrawer 分类抽屉组件
+    import CategoryDrawer from '@/views/tushan/CategoryDrawer.vue';
     // 引入 LinkList 链接列表组件
-    import LinkList from "@/components/tushan/LinkList.vue";
+    import LinkList from "@/views/tushan/LinkList.vue";
 
 
     /**
@@ -72,7 +72,7 @@
         const scrollTop = categoryListWrapper.scrollTop;
         // 如果向上滚动 且 滚动到顶部，则隐藏导航列表
         if (event.deltaY < 0 && scrollTop === 0) {
-            updateShowNavigationList(false);
+            showNavigationList.value = false;
         }
     }
     /**
@@ -89,7 +89,7 @@
         const scrollTop = linkListWrapper.scrollTop;
         // 如果向上滚动 且 滚动到顶部，则隐藏导航列表
         if (event.deltaY < 0 && scrollTop === 0) {
-            updateShowNavigationList(false);
+            showNavigationList.value = false;
         }
     }
     // 组件挂载时添加监听滚动事件
@@ -181,7 +181,7 @@
         }
 
         // 给最后一个分类容器增加下外边距，避免底部内容被遮挡
-        .drawer-list:last-child {
+        .category-list:last-child {
             margin-bottom: 15px;
         }
     }

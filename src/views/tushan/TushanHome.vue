@@ -7,7 +7,7 @@
         <!-- 导航列表容器 -->
         <div class="nav-list-wrapper" v-show="showNavigationList">
             <!-- 导航列表 -->
-            <NavigationList :updateShowNavigationList="updateShowNavigationList"/>
+            <NavigationList/>
         </div>
     </transition>
 
@@ -22,13 +22,16 @@
         <!-- 后台管理地址 -->
         <a class="onenav-backstage" :href="`${serverConfigStore().apiBaseUrl}/index.php?c=admin`" target="_blank" title="OneNav 后台管理地址">log in</a>
     </span>
+
+    <!-- 历史面板；放到最后的原因是不占用导航列表的空间，使导航列表的高度不受影响 -->
+    <HistoryPanel class="history-panel" :is-navigation-visible="showNavigationList"/>
 </template>
 
 <script setup>
     /**
      * 此处代码块用于引入组件需要的 API、传递的数据和方法、通用数据
      */
-    import { ref, onMounted, onBeforeUnmount } from 'vue'
+    import { ref, onMounted, onBeforeUnmount, provide } from 'vue'
     // 引入 serverConfig 仓库，用于获取服务器配置
     import { serverConfigStore } from "@/store/serverConfig.js";
 
@@ -40,6 +43,8 @@
     import SearchBar from '@/views/tushan/SearchBar.vue'
     // 引入 NavigationList 导航列表组件
     import NavigationList from '@/views/tushan/NavigationList.vue'
+    // 引入 HistoryPanel 历史面板组件
+    import HistoryPanel from '@/views/tushan/HistoryPanel.vue'
 
 
     /**
@@ -88,12 +93,9 @@
         window.removeEventListener('click', handleClick)
     })
     /**
-     * 更新导航列表的显示状态，由子组件调用
-     * @param newValue - 新的导航列表显示状态
+     * 使用 provide 提供方法和数据给子组件调用
      */
-    const updateShowNavigationList = (newValue) => {
-        showNavigationList.value = newValue;
-    };
+    provide('showNavigationList', { showNavigationList });
 </script>
 
 <style lang="less">

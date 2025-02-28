@@ -13,13 +13,19 @@ export const navigationDataStore = defineStore('navigationData', {
     persist: {
         // 启用持久化存储，默认会将 store 中的所有状态持存储在 localstorage 中
         enabled: true,
-        /**
-         * 指定持久化存储的方式，可以是 localStorage 或 sessionStorage
-         * localStorage 和 sessionStorage 的区别：
-         *  - localStorage：数据会永久存储，除非用户手动删除
-         *  - sessionStorage：数据只会在当前会话中有效，关闭页面或浏览器后会被清除
-         */
-        storage: localStorage
+        // 指定持久化存储的策略
+        strategies: [
+            {
+                // 存储时使用的 key
+                key: "navigationData",
+                /**
+                 * 指定持久化存储的方式，可以是 localStorage 或 sessionStorage
+                 * - localStorage：数据将持久化存储在浏览器的 localStorage 中，关闭浏览器后数据仍然存在
+                 * - sessionStorage：数据将持久化存储在浏览器的 sessionStorage 中，关闭浏览器后数据将被清除
+                 */
+                storage: localStorage,
+            }
+        ]
     },
     /**
      * state 是一个函数，返回 store 的初始状态
