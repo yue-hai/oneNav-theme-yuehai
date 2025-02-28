@@ -44,6 +44,8 @@
     import { ref, watch, onUnmounted } from 'vue'
     // 接收父组件传递的参数
     const { isNavigationVisible } = defineProps(['isNavigationVisible']);
+    // 引入 navigationData 仓库，用于读取导航数据
+    import { cacheTushanStore } from "@/store/tushan/cacheTushan.js";
     // 引入静态数据
     import { tushanStaticData } from '@/data/tushanStaticData.js';
     // 引入搜索建议处理工具
@@ -55,8 +57,8 @@
     /**
      * 此处代码块用于定义搜索栏组件的数据和方法
      */
-    // 当前搜索引擎；默认为第一个搜索引擎
-    const currentEngine = ref(tushanStaticData.searchEngines[0])
+    // 当前搜索引擎，获取用户选择的搜索引擎，如果没有选择，则默认为第一个搜索引擎
+    const currentEngine = ref(tushanStaticData.searchEngines.find(engine => engine.name === cacheTushanStore().cacheSearchEngine) ?? tushanStaticData.searchEngines[0])
     // 搜索文本
     const searchText = ref('')
     // 点击搜索引擎图标，显示/隐藏搜索引擎选择面板
@@ -100,6 +102,8 @@
         currentEngine.value = engine
         // 隐藏搜索引擎选择面板
         showEngineSelect.value = false
+        // 保存用户选择的搜索引擎
+        cacheTushanStore().cacheSearchEngine = engine.name
     }
     // 监听点击事件，用于关闭弹出面板
     window.addEventListener('click', (e) => {
