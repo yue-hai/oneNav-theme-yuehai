@@ -1,6 +1,6 @@
 <template>
     <!-- 单个链接项 -->
-    <a class="link-item" :href="link.url" target="_blank" :title="link.title">
+    <a class="link-item" :href="link.url" target="_blank" :title="link.title" @click.stop="handleClickLink(link)">
         <!-- 链接图标容器-->
         <div class="link-icon-content">
             <!-- 链接图标，当获取到了网站图标时，使用网站图标；当没有获取到网站图标时，使用默认图标 -->
@@ -20,19 +20,51 @@
      * 此处代码块用于引入组件需要的 API、传递的数据和方法、通用数据
      */
     // 引入 vue3 的响应式 API
-    import { toRefs } from 'vue'
+    import { inject, toRefs } from 'vue'
+    // 使用 inject 接收父组件使用 provide 提供的方法和数据
+    const { showNavigationList } = inject('showNavigationList');
     // 接收父组件传递的参数
     const props = defineProps(['link']);
     // 因为是响应式数据，所以使用 toRefs 将其解构，使其保持响应式
     const { link } = toRefs(props);
     // 引入 navigationData 仓库，用于读取导航数据
     import { navigationDataStore } from "@/store/navigationData.js";
+    // 引入 cacheTushanStore 仓库，用于读取和保存用户设置
+    import { cacheTushanStore } from "@/store/tushan/cacheTushan.js";
     // 引入 pinia 转换，将仓库转换为响应式变量
     import { storeToRefs } from "pinia";
     // 使用 storeToRefs 将仓库转换为响应式变量，方便在模板中使用
     const { linkIconList } = storeToRefs(navigationDataStore());
+    const { cacheLinkList } = storeToRefs(cacheTushanStore());
     // 引入资源读取工具，用于读取图片资源
     import { readImage } from '@/utils/resourceReader.js';
+
+
+    /**
+     * 此处代码块用于定义点击链接的事件处理逻辑
+     */
+    /**
+     * 点击链接时，将链接添加到缓存中
+     */
+    const handleClickLink = (link) => {
+        // 判断要添加的链接是否已经存在，如果不存在则添加，如果存在则将其移动到第一个位置
+        const index = cacheLinkList.value.findIndex(item => item.url === link.url);
+        if (index !== -1) {
+            // 如果已经存在，则将其移动到第一个位置
+            cacheLinkList.value.splice(index, 1);
+        }
+        // 将链接添加到第一个位置
+        cacheLinkList.value.unshift(link);
+
+        // 判断缓存中的链接数量是否超过 10 个
+        if (cacheLinkList.value.length > 10) {
+            // 如果超过 10 个，则删除第 11 个及以后的链接
+            cacheLinkList.value.splice(10);
+        }
+
+        // 关闭导航列表
+        showNavigationList.value = false;
+    };
 </script>
 
 <style scoped lang="less">
