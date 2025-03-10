@@ -6,7 +6,7 @@
             <!-- 链接图标，当获取到了网站图标时，使用网站图标；当没有获取到网站图标时，使用默认图标 -->
             <img
                 class="link-icon"
-                :src="linkIconList[link.id] || readImage('tushan/link/链接地球.svg')"
+                :src="linkIconList[link.id] || linkEarthIcon"
                 :alt="link.title"
             />
         </div>
@@ -36,8 +36,13 @@
     // 使用 storeToRefs 将仓库转换为响应式变量，方便在模板中使用
     const { linkIconList } = storeToRefs(navigationDataStore());
     const { cacheLinkList } = storeToRefs(cacheTushanStore());
-    // 引入资源读取工具，用于读取图片资源
-    import { readImage } from '@/utils/resourceReader.js';
+
+
+    /**
+     * 此处代码块用于引入组件和图标
+     */
+    // 引入链接地球图标
+    import linkEarthIcon from '@/assets/images/tushan/link/链接地球.svg';
 
 
     /**
