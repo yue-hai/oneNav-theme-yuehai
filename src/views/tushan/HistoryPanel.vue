@@ -55,7 +55,8 @@
 .search-move-up {
     // 让 SearchBar 向上移动 10vh，和 SearchBar 搜索框保持一致
     transform: translateY(-10vh);
-    opacity: 0; // **渐渐隐藏**
+    opacity: 0; // 渐渐隐藏
+    pointer-events: none; // 禁用所有子元素交互
 }
 // 当历史面板隐藏时，设置为不可见
 .history-panel.hidden {
