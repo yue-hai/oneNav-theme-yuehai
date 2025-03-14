@@ -32,8 +32,11 @@
 
     // 倒计时函数
     const startCountdown = () => {
+        // 确保定时器已清除
+        if (closeTimeoutId) clearInterval(closeTimeoutId);
+
         // setInterval 的作用是每隔一段时间执行一次函数，直到 clearInterval 被调用
-        const closeTimeoutId = setInterval(() => {
+        closeTimeoutId = setInterval(() => {
             // 每次减少 0.1 秒，显示小数
             countdown.value -= 0.1;
 
@@ -41,6 +44,7 @@
             if (countdown.value <= 0) {
                 // 清除定时器
                 clearInterval(closeTimeoutId);
+                closeTimeoutId = null;
                 // 触发关闭提示的事件
                 closeErrorTip();
             }
@@ -54,9 +58,7 @@
     // 组件卸载时清除定时器
     onUnmounted(() => {
         // 清除定时器
-        if (closeTimeoutId) {
-            clearTimeout(closeTimeoutId);
-        }
+        if (closeTimeoutId) clearInterval(closeTimeoutId);
     });
 </script>
 
