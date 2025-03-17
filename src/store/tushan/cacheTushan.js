@@ -37,13 +37,43 @@ export const cacheTushanStore = defineStore('cacheTushan', {
             cacheSearchEngine: "bing",
             // 点击过的链接列表
             cacheLinkList: [],
+            // 历史面板的列数，默认为 6
+            cacheHistoryPanelColumns: 6,
+            // 历史面板的行数，默认为 2
+            cacheHistoryPanelRows: 2,
+            // 历史面板项的间距，默认为 20px
+            cacheHistoryPanelGap: "20px",
         }
     },
     /**
      * actions 是一个对象，其中包含能够修改状态的方法
      * 在这里定义的方法将用来修改相关的状态
      */
-    actions: {},
+    actions: {
+        /**
+         * 向点击过的链接列表中添加一个链接
+         * @param link 要添加的链接
+         */
+        addCacheLink(link) {
+            // 判断要添加的链接在点击过的链接列表中是否已经存在
+            const index = this["cacheLinkList"].findIndex(item => item.url === link.url);
+            if (index !== -1) {
+                // 如果已经存在，则将其移动到第一个位置
+                this["cacheLinkList"].splice(index, 1);
+            }else {
+                // 如果不存在，则添加到第一个位置
+                this["cacheLinkList"].unshift(link);
+            }
+
+            // 计算当前行列数的乘积，即总共应该显示的链接数量
+            const totalLinkCount = this["cacheHistoryPanelColumns"] * this["cacheHistoryPanelRows"];
+            // 判断缓存中的链接数量是否超过了总共应该显示的链接数量
+            if (this["cacheLinkList"].length > totalLinkCount) {
+                // 如果超过了，则删除多余的链接
+                this["cacheLinkList"].splice(totalLinkCount);
+            }
+        }
+    },
     /**
      * getters 是一个对象，其中包含能够获取状态的方法
      * 在这里定义的方法将用来获取相关的状态

@@ -317,9 +317,8 @@
     }
 }
 
-// 当 NavigationList 显示时，SearchBar 上移 5vh
+// 当 NavigationList 显示时，搜索栏上移 5vh
 .search-move-up {
-    // 让 SearchBar 向上移动 10vh
-    transform: translateY(-10vh);
+    transform: translateY(-10vh); // 让搜索栏向上移动 10vh
 }
 </style>

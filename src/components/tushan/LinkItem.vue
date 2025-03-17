@@ -35,7 +35,6 @@
     import { storeToRefs } from "pinia";
     // 使用 storeToRefs 将仓库转换为响应式变量，方便在模板中使用
     const { linkIconList } = storeToRefs(navigationDataStore());
-    const { cacheLinkList } = storeToRefs(cacheTushanStore());
 
 
     /**
@@ -52,20 +51,8 @@
      * 点击链接时，将链接添加到缓存中
      */
     const handleClickLink = (link) => {
-        // 判断要添加的链接是否已经存在，如果不存在则添加，如果存在则将其移动到第一个位置
-        const index = cacheLinkList.value.findIndex(item => item.url === link.url);
-        if (index !== -1) {
-            // 如果已经存在，则将其移动到第一个位置
-            cacheLinkList.value.splice(index, 1);
-        }
-        // 将链接添加到第一个位置
-        cacheLinkList.value.unshift(link);
-
-        // 判断缓存中的链接数量是否超过 10 个
-        if (cacheLinkList.value.length > 10) {
-            // 如果超过 10 个，则删除第 11 个及以后的链接
-            cacheLinkList.value.splice(10);
-        }
+        // 将链接添加到点击过的链接列表中
+        cacheTushanStore().addCacheLink(link);
 
         // 关闭导航列表
         showNavigationList.value = false;
