@@ -16,8 +16,8 @@
      */
     // 引入 vue3 的响应式 API
     import { ref, inject, onMounted, onUnmounted } from 'vue';
-    // 使用 inject 接收父组件使用 provide 提供的方法和数据
-    const { closeErrorTip } = inject('homeMethod');
+    // 使用 inject 接收父组件使用 provide 提供的方法
+    const { closePopup } = inject('homePopupMethod');
     // 接收父组件传递的参数
     const { errorTipData } = defineProps(['errorTipData']);
 
@@ -26,7 +26,7 @@
      * 此处代码块用于控制错误提示的显示与隐藏、倒计时关闭提示
      */
     // 创建一个响应式数据，用于存储倒计时的秒数
-    const countdown = ref(errorTipData.closeCountdown);
+    const countdown = ref(errorTipData["closeCountdown"] ?? 5);
     // 用于存储 setTimeout 的 ID，以便在需要时清除定时器
     let closeTimeoutId = null;
 
@@ -46,7 +46,7 @@
                 clearInterval(closeTimeoutId);
                 closeTimeoutId = null;
                 // 触发关闭提示的事件
-                closeErrorTip();
+                closePopup('error-tip');
             }
         }, 100); // 更新频率为 100 毫秒（0.1 秒）
     };

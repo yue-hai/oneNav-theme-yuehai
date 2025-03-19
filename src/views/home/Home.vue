@@ -3,7 +3,7 @@
     <router-view />
 
     <!-- 错误提示组件 -->
-    <ErrorTip v-if="isErrorTipVisible" :errorTipData="errorTipData"></ErrorTip>
+    <ErrorTip v-if="popupStates['error-tip'].visible" :errorTipData="popupStates['error-tip'].data"></ErrorTip>
 </template>
 
 <script setup>
@@ -36,27 +36,30 @@
     /**
      * 此处代码块用于控制各种弹窗的显示与隐藏，将方法提供给子组件调用
      */
-    // 控制错误提示的显示与隐藏
-    const isErrorTipVisible = ref(false);
-    // 存储错误提示的数据
-    const errorTipData = ref({});
-    // 显示错误提示，传递错误提示数据
-    const openErrorTip = (data) => {
-        errorTipData.value = data;
-        isErrorTipVisible.value = true;
+    // 创建一个统一的弹窗状态管理对象
+    const popupStates = ref({
+        // 错误提示；默认不显示
+        'error-tip': { visible: false, data: {} },
+    });
+    // 创建统一的打开弹窗方法
+    const openPopup = (type, data = {}, callback = null) => {
+        // 设置弹窗的显示状态：显示
+        popupStates.value[type].visible = true;
+        // 设置弹窗的数据
+        popupStates.value[type].data = data;
+        // 设置弹窗的回调函数
+        if (callback) popupStates.value[type].callback = callback;
     };
-    // 关闭错误提示，隐藏错误提示组件
-    const closeErrorTip = () => {
-        isErrorTipVisible.value = false;
-    }
 
-
-    /**
-     * 此处代码块使用 provide 提供方法和数据给子组件调用，子组件通过 inject 接收
-     */
-    provide('homeMethod', {
-        openErrorTip,
-        closeErrorTip,
+    // 创建统一的关闭弹窗方法
+    const closePopup = (type) => {
+        // 设置弹窗的显示状态：隐藏
+        popupStates.value[type].visible = false;
+    };
+    // 提供弹窗方法给子组件调用
+    provide('homePopupMethod', {
+        openPopup,
+        closePopup
     });
 
 
@@ -78,7 +81,7 @@
 
             // 调用获取登录信息的 API
             const loginInfo = await getApiRequest({
-                homeMethod: { openErrorTip, closeErrorTip },
+                homePopupMethod: { closePopup },
                 url: `/oneNavApi/index.php`,
                 urlParams: { c: "api", method: "check_login" },
             });
@@ -111,19 +114,12 @@
         }
 
         // 已经登录，调用获取导航数据的 API
-        getCategoryList({ openErrorTip, closeErrorTip });
+        getCategoryList({ openPopup, closePopup });
     }
     /**
      * 定义获取登录信息失败时的回调函数
      */
     const loginErrorCallback = () => {
-        // 显示错误提示
-        openErrorTip({
-            text: "用户未登录",
-            tooltip: "获取登录信息失败，可能是未登录或接口出错，若已登录请检查 nginx 设置",
-            closeCountdown: 5
-        });
-
         // 将当前页面重定向到登录页
         window.location.href = `${serverConfigStore().apiBaseUrl}/index.php?c=login`;
     }

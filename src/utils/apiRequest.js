@@ -15,23 +15,23 @@ export {
 
 /**
  * 调用通用 API 工具方法
- * @param homeMethod 父组件传递的方法
+ * @param homePopupMethod 父组件传递的方法
  * @param url 请求地址
  * @param urlParams URL 参数；默认为空
  * @param handler 额外的请求头；如果传入了额外的请求头，则使用传入的请求头；否则使用默认的请求头
  * @param responseType 响应类型；默认为 json
  */
 const getApiRequest = async ({
-    homeMethod,
+    homePopupMethod,
     url,
     urlParams,
     handler,
     responseType
 }) => {
     // 解构赋值，获取父组件传递的方法
-    const { closeErrorTip } = homeMethod;
+    const { closePopup } = homePopupMethod;
     // 请求开始时，关闭错误提示
-    closeErrorTip();
+    closePopup("error-tip");
 
     try {
         // 发送 get 请求；使用 async/await 语法糖，简化 Promise 的使用，返回响应数据

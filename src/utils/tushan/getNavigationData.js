@@ -14,41 +14,40 @@ export{
 
 /**
  * 获取分类目录列表
- * @param homeMethod 父组件传递的方法
+ * @param homePopupMethod 父组件传递的方法
  */
-const getCategoryList = async (homeMethod) => {
+const getCategoryList = async (homePopupMethod) => {
     // 解构赋值，获取父组件传递的方法
-    const { openErrorTip } = homeMethod;
+    const { openPopup } = homePopupMethod;
 
     try {
         // 调用获取分类目录列表的 API
         const response = await getApiRequest({
-            homeMethod: homeMethod,
+            homePopupMethod: homePopupMethod,
             url: `/oneNavApi/index.php`,
             urlParams: {c: "api", method: "category_list", page: "1", limit: "99999"},
         });
         // 调用获取链接列表
-        await getLinkList(homeMethod, response.data.data);
+        await getLinkList(homePopupMethod, response.data.data);
     } catch {
         // 如果请求失败，打印错误信息
         console.log("获取分类目录数据失败");
         // 显示错误提示
-        openErrorTip({
+        openPopup("error-tip", {
             text: "获取分类目录数据失败",
-            tooltip: "获取分类目录数据失败，可能是未登录或接口出错，若已登录请检查 nginx 设置",
-            closeCountdown: 5
+            tooltip: "获取分类目录数据失败，可能是未登录或接口出错，若已登录请检查 nginx 设置"
         });
     }
 }
 
 /**
  * 查询指定分类下的链接列表
- * @param homeMethod 父组件传递的方法
+ * @param homePopupMethod 父组件传递的方法
  * @param categoryList 分类目录列表
  */
-const getLinkList = async (homeMethod, categoryList) => {
+const getLinkList = async (homePopupMethod, categoryList) => {
     // 解构赋值，获取父组件传递的方法
-    const { openErrorTip } = homeMethod;
+    const { openPopup } = homePopupMethod;
 
     /**
      * 使用 Promise.all 和 map 方法并行处理所有分类的链接请求
@@ -59,7 +58,7 @@ const getLinkList = async (homeMethod, categoryList) => {
         try {
             // 为每个分类发起异步请求，获取该分类下的所有链接
             const response = await getApiRequest({
-                homeMethod: homeMethod,
+                homePopupMethod: homePopupMethod,
                 url: `/oneNavApi/index.php`,
                 urlParams: { c: "api", method: "q_category_link", category_id: `${category.id}`, page: "1", limit: "99999" },
             });
@@ -69,10 +68,9 @@ const getLinkList = async (homeMethod, categoryList) => {
             // 如果请求失败，打印错误信息
             console.log(`${category.name} 分类下的链接列表获取失败：`, error);
             // 显示错误提示
-            openErrorTip({
+            openPopup("error-tip", {
                 text: `${category.name} 目录获取失败：`,
-                tooltip: `获取获取 ${category.name} 下的链接列表失败，可能是未登录或接口出错，若已登录请检查 nginx 设置`,
-                closeCountdown: 5
+                tooltip: `获取获取 ${category.name} 下的链接列表失败，可能是未登录或接口出错，若已登录请检查 nginx 设置`
             });
         }
     });
