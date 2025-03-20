@@ -5,11 +5,11 @@
         <div class="history-container">
             <!-- 遍历历史链接列表 -->
             <LinkItem v-for="link in cacheLinkList" :key="link.id" :link="link"/>
-        </div>
 
-        <!-- 编辑按钮 -->
-        <div class="edit-button" @click="openEditForm">
-            <HoverButton :button="{ title: '编辑', image: editIcon }" />
+            <!-- 编辑按钮 -->
+            <div class="edit-button" @click="openEditForm">
+                <HoverButton :button="{ title: '编辑', image: editIcon }" />
+            </div>
         </div>
     </div>
 </template>
@@ -124,28 +124,28 @@
         place-items: center; // 网格布局的垂直水平居中
         gap: v-bind(cacheHistoryPanelGap); // 设置间距，绑定动态 gap
 
-        // 当鼠标悬停到历史容器上时，显示编辑按钮；使用兄弟选择器
-        &:hover + .edit-button {
+        // 当鼠标悬停到历史容器上时，显示编辑按钮
+        &:hover .edit-button {
             opacity: 1; // 完全显示
             visibility: visible; // 让其可见
         }
-    }
 
-    // 编辑按钮
-    .edit-button {
-        position: absolute; // 设置定位为绝对定位
-        top: 50%;  // 顶部 50%
-        left: 50%; // 左侧 50%
-        transform: translate(-50%, -50%); // 通过 transform 位移自身 50% 达到居中效果
-        opacity: 0; // 初始隐藏
-        visibility: hidden; // 避免占据空间
-        transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out; // 添加过渡动画
+        // 编辑按钮
+        .edit-button {
+            position: absolute; // 设置定位为绝对定位
+            top: 50%;  // 顶部 50%
+            left: 50%; // 左侧 50%
+            transform: translate(-50%, -50%); // 通过 transform 位移自身 50% 达到居中效果
+            opacity: 0; // 初始隐藏
+            visibility: hidden; // 避免占据空间
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out; // 添加过渡动画
 
-        // 覆盖编辑按钮容器尺寸
-        ::v-deep(.button-container) {
-            width: 35px; // 宽度 35px
-            height: 35px; // 高度 35px
-            margin-top: 5px; // 上边距 5px
+            // 覆盖编辑按钮容器尺寸
+            ::v-deep(.button-container) {
+                width: 35px; // 宽度 35px
+                height: 35px; // 高度 35px
+                margin-top: 5px; // 上边距 5px
+            }
         }
     }
 }
