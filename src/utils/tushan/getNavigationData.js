@@ -33,10 +33,13 @@ const getCategoryList = async (homePopupMethod) => {
         // 如果请求失败，打印错误信息
         console.log("获取分类目录数据失败");
         // 显示错误提示
-        openPopup("error-tip", {
-            text: "获取分类目录数据失败",
-            tooltip: "获取分类目录数据失败，可能是未登录或接口出错，若已登录请检查 nginx 设置"
-        });
+        openPopup("error-tip",
+            false,
+            {
+                text: "获取分类目录数据失败",
+                tooltip: "获取分类目录数据失败，可能是未登录或接口出错，若已登录请检查 nginx 设置"
+            }
+        );
     }
 }
 
@@ -68,10 +71,13 @@ const getLinkList = async (homePopupMethod, categoryList) => {
             // 如果请求失败，打印错误信息
             console.log(`${category.name} 分类下的链接列表获取失败：`, error);
             // 显示错误提示
-            openPopup("error-tip", {
-                text: `${category.name} 目录获取失败：`,
-                tooltip: `获取获取 ${category.name} 下的链接列表失败，可能是未登录或接口出错，若已登录请检查 nginx 设置`
-            });
+            openPopup("error-tip",
+                false,
+                {
+                    text: `${category.name} 目录获取失败：`,
+                    tooltip: `获取获取 ${category.name} 下的链接列表失败，可能是未登录或接口出错，若已登录请检查 nginx 设置`
+                }
+            );
         }
     });
 
