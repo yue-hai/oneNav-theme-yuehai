@@ -1,6 +1,6 @@
 <template>
     <!-- vue 的过渡动画组件；name 属性用于指定动画名称，@after-leave 事件用于在动画结束后执行 closeOverlay 方法 -->
-    <transition name="form" @after-leave="closeOverlay">
+    <transition name="form">
         <!-- 基础输入表单组件容器 -->
         <div class="form-container" @click.stop v-if="baseInputForm.visible">
             <!-- 遍历表单数据，生成输入框 -->
@@ -43,20 +43,6 @@
     const { baseInputForm } = toRefs(props);
     // 定义一个响应式数据，用于存储输入框的值
     const inputValues = ref({});
-
-
-    /**
-     * 此处代码块用于定义关闭组件时的事件处理逻辑
-     */
-    /**
-     * 当组件离开动画结束后，关闭蒙版，防止因蒙版一起关闭导致的组件的离开动画无法正常播放
-     */
-    const closeOverlay = () => {
-        // 清空输入框的值
-        inputValues.value = {};
-        // 设置蒙版的显示状态：隐藏
-        closePopup('overlay');
-    };
 </script>
 
 <style scoped lang="less">
@@ -72,11 +58,9 @@
     top: 50%; // 顶部 50%
     left: 50%; // 左侧 50%
     transform: translate(-50%, -50%) rotateX(-10deg); // 通过 transform 位移自身 50% 达到居中效果，并在 X 轴上旋转 -10 度
-    background: rgba(0, 0, 0, 0.6); // 设置背景颜色
+    background: rgba(0, 0, 0, 0.8); // 设置背景颜色
     border-radius: 15px; // 设置圆角
     overflow: hidden; // 隐藏溢出内容
-    transition: all 0.3s ease-in-out; // 添加过渡动画
-    transform-style: preserve-3d; // 保持 3D 效果
     box-shadow: // 设置阴影
         rgba(0, 0, 0, 0.6) 0 2px 4px,
         rgba(0, 0, 0, 0.5) 0 7px 13px -3px,

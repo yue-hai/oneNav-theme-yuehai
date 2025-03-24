@@ -48,23 +48,22 @@
      */
     // 创建一个统一的弹窗状态管理对象
     const popupStates = ref({
-        // 蒙版，用于展示加载动画；默认不显示
+        // 蒙版，用于展示蒙版遮罩；默认不显示
         'overlay': { visible: false },
         // 错误提示；默认不显示
         'error-tip': { visible: false, overlayVisible: false, data: {} },
         // 基础输入表单，默认不显示
-        'base-input-form': { visible: false, overlayVisible: false, data: {}, callback: null },
+        'base-input-form': { visible: false, overlayVisible: true, data: {}, callback: null },
     });
     /**
      * 创建统一的打开弹窗方法
      * @param type 弹窗类型，即 popupStates 中的 key
-     * @param overlayVisible 是否显示蒙版，默认不显示
      * @param data 弹窗数据
      * @param callback 弹窗回调函数
      */
-    const openPopup = (type, overlayVisible = false, data = {}, callback = null) => {
+    const openPopup = (type, data = {}, callback = null) => {
         // 设置蒙版的显示状态
-        popupStates.value['overlay'].visible = overlayVisible;
+        popupStates.value['overlay'].visible = popupStates.value[type].overlayVisible;
         // 设置弹窗的显示状态：显示
         popupStates.value[type].visible = true;
         // 设置弹窗的数据
@@ -79,6 +78,7 @@
     const closePopup = (type) => {
         // 设置弹窗的显示状态：隐藏
         popupStates.value[type].visible = false;
+        popupStates.value['overlay'].visible = false;
     };
     // 提供弹窗方法给子组件调用
     provide('homePopupMethod', { openPopup, closePopup });

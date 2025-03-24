@@ -39,7 +39,7 @@
 
 // 当元素处于 进入过渡激活 或 离开过渡激活 状态时，表示动画正在进行中
 .overlay-enter-active, .overlay-leave-active {
-    transition: opacity 0.3s ease; // 添加过渡动画
+    transition: opacity 0.5s ease; // 添加过渡动画；若是插槽中的组件也有过渡动画，需要保持时间一致
 }
 // 当元素处于 进入开始 或 离开结束 阶段，表示动画刚开始或动画最后的样式
 .overlay-enter-from, .overlay-leave-to {

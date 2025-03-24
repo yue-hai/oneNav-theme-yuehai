@@ -58,7 +58,6 @@
     const openEditForm = () => {
         // 打开基础输入表单
         openPopup('base-input-form',
-            true,
             {
                 inputData: [
                     { title: '行数', value: cacheHistoryPanelRows, image: rowIcon },
