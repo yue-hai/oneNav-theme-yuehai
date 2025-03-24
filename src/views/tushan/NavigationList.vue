@@ -6,7 +6,7 @@
             <!-- 遍历导航分类数据 -->
             <div class="category-list" v-for="category in navigationDataList" :key="category.id">
                 <!-- 使用 CategoryDrawer 组件展示分类数据，并传递点击分类滚动链接列表方法 -->
-                <CategoryDrawer :category="category" @clickCategoryScrollLink="clickCategoryScrollLink"/>
+                <CategoryDrawer :category="category" :clickCategoryScrollLink="clickCategoryScrollLink"/>
             </div>
         </div>
 
