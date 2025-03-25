@@ -149,11 +149,8 @@
         loadIcons();
     });
     // 监听导航分类数据变化，重新加载图标
-    watch(
-        // 监听 category 数据
-        category,
-        // 当 category 数据变化时，重新加载图标
-        () => {
+    watch(category, () => {
+            // 当 category 数据变化时，重新加载图标
             loadIcons();
         },
         // 深度监听，确保监听到 category 内部数据的变化

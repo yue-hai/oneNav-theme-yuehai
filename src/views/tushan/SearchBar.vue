@@ -136,14 +136,15 @@
     }
     // 监听搜索文本变化，生成搜索建议
     watch(searchText, (newValue) => {
-        // 如果搜索文本为空，则清空搜索建议
-        if (!newValue) {
-            suggestions.value = []
-            return
+            // 如果搜索文本为空，则清空搜索建议
+            if (!newValue) {
+                suggestions.value = []
+                return
+            }
+            // 获取搜索建议
+            fetchSuggestions(suggestions, currentEngine, newValue)
         }
-        // 获取搜索建议
-        fetchSuggestions(suggestions, currentEngine, newValue)
-    })
+    )
     // 组件卸载时清理清理全局回调函数和 script 标签
     onUnmounted(() => {
         cleanupSuggestions()
