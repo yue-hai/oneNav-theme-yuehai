@@ -23,26 +23,26 @@
 
 <style scoped lang="less">
 /*
- * Vue 的 <transition name="tip"> 在进入与离开阶段，会自动给元素添加或移除如下类名：
- * 1. .tip-enter-active：进入过渡激活阶段，表示进入动画即将开始
- * 2. .tip-enter-from：进入开始阶段，表示进入动画的第一帧
- * 3. .tip-enter-to：进入结束阶段，表示进入动画的最后一帧
- * 4. .tip-leave-active：离开过渡激活阶段，表示离开动画即将开始
- * 5. .tip-leave-from：离开开始阶段，表示离开动画的第一帧
- * 6. .tip-leave-to：离开结束阶段，表示离开动画的最后一帧
+ * Vue 的 <transition name="fade"> 在进入与离开阶段，会自动给元素添加或移除如下类名：
+ * 1. .fade-enter-active：进入过渡激活阶段，表示进入动画即将开始
+ * 2. .fade-enter-from：进入开始阶段，表示进入动画的第一帧
+ * 3. .fade-enter-to：进入结束阶段，表示进入动画的最后一帧
+ * 4. .fade-leave-active：离开过渡激活阶段，表示离开动画即将开始
+ * 5. .fade-leave-from：离开开始阶段，表示离开动画的第一帧
+ * 6. .fade-leave-to：离开结束阶段，表示离开动画的最后一帧
  *
  * 通过给这些类名编写样式，可以控制元素的 进入 和 离开 动画。
  */
 // 当蒙版即将 进入 或 离开 时
-.tip-enter-active, .tip-leave-active {
+.fade-enter-active, .fade-leave-active {
     transition: opacity 0.5s ease-in-out; // 对透明度属性使用 0.5 秒的过渡，并使用 ease-in-out 的缓动函数
 }
 // 当蒙版执行 进入动画的第一帧 或 离开动画的最后一帧 时
-.tip-enter-from, .tip-leave-to {
+.fade-enter-from, .fade-leave-to {
     opacity: 0; // 设置透明度为 0，即不可见状态
 }
 // 当蒙版执行 进入动画的最后一帧 或 离开动画的第一帧 时
-.tip-enter-to, .tip-leave-from {
+.fade-enter-to, .fade-leave-from {
     opacity: 1; // 设置透明度为 1，即可见状态
 }
 </style>

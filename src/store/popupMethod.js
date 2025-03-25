@@ -44,7 +44,7 @@ export const popupMethodStore = defineStore('popupMethod', {
             // 提示弹窗状态管理对象
             tipPopupStates: {
                 // 错误提示；默认不显示
-                'error-tip': { component: markRaw(ErrorTip), animation: "tip", visible: false, data: {} },
+                'error-tip': { component: markRaw(ErrorTip), animation: "fade", visible: false, data: {} },
             },
 
             // 激活的蒙版弹窗；默认为空
@@ -52,7 +52,7 @@ export const popupMethodStore = defineStore('popupMethod', {
             // 创建一个统一的蒙版弹窗状态管理对象
             overlayPopupStates: {
                 // 基础输入表单；默认不显示
-                'base-input-form': { component: markRaw(BaseInputForm), animation: "form", data: {}, callback: () => {} }
+                'base-input-form': { component: markRaw(BaseInputForm), animation: "flip-from-back", data: {}, callback: () => {} }
             }
         }
     },
