@@ -36,9 +36,7 @@
      * 此处代码块用于引入组件需要的 API、传递的数据和方法、通用数据
      */
     // 引入 vue3 的响应式 API
-    import { inject, toRefs, onMounted, watch } from 'vue'
-    // 使用 inject 接收父组件使用 provide 提供的方法和数据
-    const homePopupMethod = inject('homePopupMethod');
+    import { toRefs, onMounted, watch } from 'vue'
     // 接收父组件传递的参数
     const props = defineProps(['category']);
     // 因为是响应式数据，所以使用 toRefs 将其解构，使其保持响应式
@@ -104,7 +102,6 @@
             domain = encodeURIComponent(domain);
             // 请求获取图标【
             const response = await getApiRequest({
-                homePopupMethod: homePopupMethod,
                 url: `/faviconkit/${domain}/50`,
                 handler: {},
                 // 使用 arraybuffer 格式接收数据，获取图标的二进制数据

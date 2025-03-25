@@ -2,6 +2,8 @@
 import axios from 'axios'
 // 引入 serverConfig 仓库，用于获取 token
 import { serverConfigStore } from "@/store/serverConfig.js";
+// 引入 popupMethodStore 仓库，用于管理提示弹窗和蒙版弹窗
+import { popupMethodStore } from "@/store/popupMethod.js";
 // 引入请求处理工具
 import { requestHandler } from '@/utils/requestHandler.js';
 
@@ -15,23 +17,19 @@ export {
 
 /**
  * 调用通用 API 工具方法
- * @param homePopupMethod 父组件传递的方法
  * @param url 请求地址
  * @param urlParams URL 参数；默认为空
  * @param handler 额外的请求头；如果传入了额外的请求头，则使用传入的请求头；否则使用默认的请求头
  * @param responseType 响应类型；默认为 json
  */
 const getApiRequest = async ({
-    homePopupMethod,
     url,
     urlParams,
     handler,
     responseType
 }) => {
-    // 解构赋值，获取父组件传递的方法
-    const { closePopup } = homePopupMethod;
     // 请求开始时，关闭错误提示
-    closePopup("error-tip");
+    popupMethodStore().closeTipPopup('error-tip');
 
     try {
         // 发送 get 请求；使用 async/await 语法糖，简化 Promise 的使用，返回响应数据

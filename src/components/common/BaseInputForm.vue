@@ -1,32 +1,29 @@
 <template>
-    <!-- vue 的过渡动画组件；name 属性用于指定动画名称，@after-leave 事件用于在动画结束后执行 closeOverlay 方法 -->
-    <transition name="form">
-        <!-- 基础输入表单组件容器 -->
-        <div class="form-container" @click.stop v-if="baseInputForm.visible">
-            <!-- 遍历表单数据，生成输入框 -->
-            <div class="input-group" v-for="(item, index) in baseInputForm.data.inputData" :key="index">
-                <!-- 输入框的标题和图标 -->
-                <div class="label">
-                    <!-- 标题 -->
-                    <span class="title">{{ item.title }}</span>
-                    <!-- 图标 -->
-                    <img class="icon" :src="item.image" alt="输入表单图标"/>
-                </div>
-                <!-- 输入框；绑定输入框的值为 inputValues 数组中的对应项 -->
-                <input class="input" type="text" v-model="inputValues[item.title]" :placeholder="item.value"/>
+    <!-- 基础输入表单容器 -->
+    <div class="form-container" @click.stop>
+        <!-- 遍历表单数据，生成输入框 -->
+        <div class="input-group" v-for="(item, index) in data.inputData" :key="index">
+            <!-- 输入框的标题和图标 -->
+            <div class="label">
+                <!-- 标题 -->
+                <span class="title">{{ item.title }}</span>
+                <!-- 图标 -->
+                <img class="icon" :src="item.image" alt="输入表单图标"/>
             </div>
-
-            <!-- 确定按钮 -->
-            <button class="sure-btn" @click="baseInputForm.callback(inputValues)">{{ baseInputForm.data.sure }}</button>
-            <!-- 重置和关闭按钮的容器 -->
-            <div class="sub-buttons">
-                <!-- 重置按钮 -->
-                <button class="reset-btn" @click="baseInputForm.data.resetCallback()">重置</button>
-                <!-- 关闭按钮 -->
-                <button class="close-btn" @click="closePopup('base-input-form')">关闭</button>
-            </div>
+            <!-- 输入框；绑定输入框的值为 inputValues 数组中的对应项 -->
+            <input class="input" type="text" v-model="inputValues[item.title]" :placeholder="item.value"/>
         </div>
-    </transition>
+
+        <!-- 确定按钮 -->
+        <button class="sure-btn" @click="callback(inputValues)">{{ data.sure }}</button>
+        <!-- 重置和关闭按钮的容器 -->
+        <div class="sub-buttons">
+            <!-- 重置按钮 -->
+            <button class="reset-btn" @click="data.resetCallback()">重置</button>
+            <!-- 关闭按钮 -->
+            <button class="close-btn" @click="popupMethodStore().closeOverlayPopup()">关闭</button>
+        </div>
+    </div>
 </template>
 
 <script setup>
@@ -34,13 +31,22 @@
      * 此处代码块用于引入组件需要的 API、传递的数据和方法、通用数据
      */
     // 引入 vue3 的响应式 API
-    import { ref, inject, toRefs } from 'vue';
-    // 使用 inject 接收父组件使用 provide 提供的方法
-    const { closePopup } = inject('homePopupMethod');
+    import { ref, toRefs, computed } from 'vue';
     // 接收父组件传递的参数
-    const props = defineProps(['baseInputForm']);
+    const props = defineProps(['popupData']);
     // 因为是响应式数据，所以使用 toRefs 将其解构，使其保持响应式
-    const { baseInputForm } = toRefs(props);
+    const { popupData } = toRefs(props);
+    // 引入 popupMethodStore 仓库，用于管理提示弹窗和蒙版弹窗
+    import { popupMethodStore } from "@/store/popupMethod.js";
+
+
+    /**
+     * 此处代码块用于定义组件内部的数据和方法
+     */
+    // 计算属性，用于设置 data 中的数据
+    const data = computed(() => popupData.value.data);
+    // 计算属性，用于设置确定按钮的回调函数
+    const callback = computed(() => popupData.value.callback);
     // 定义一个响应式数据，用于存储输入框的值
     const inputValues = ref({});
 </script>
@@ -174,31 +180,5 @@
             background: rgba(144, 147, 153, 0.6); // 灰色调
         }
     }
-}
-
-/*
- * Vue 的 <transition name="form"> 在进入与离开阶段，会自动给元素添加或移除如下类名：
- * 1. .form-enter-active：进入过渡激活阶段
- * 2. .form-enter-from：进入开始阶段
- * 3. .form-enter-to：进入结束阶段
- * 4. .form-leave-active：离开过渡激活阶段
- * 5. .form-leave-from：离开开始阶段
- * 6. .form-leave-to：离开结束阶段
- *
- * 通过给这些类名编写样式，可以控制元素的 进入 和 离开 动画。
- */
-// 当元素处于 进入过渡激活 或 离开过渡激活 状态时，表示动画正在进行中
-.form-enter-active, .form-leave-active {
-    transition: all 0.5s ease-in-out; // 对所有可动画属性 (all) 使用 0.5 秒的过渡，并使用 ease-in-out 的缓动函数
-}
-// 当元素处于 进入开始 或 离开结束 阶段，表示动画刚开始或动画最后的样式
-.form-enter-from, .form-leave-to {
-    transform: translate(-50%, -50%) rotateX(-60deg); // 让元素在水平、垂直方向居中的同时，在 X 轴上旋转 -60 度，让元素像是从屏幕中 后方 翻转过来。
-    opacity: 0; // 将元素的透明度设置为 0，初始阶段或结束阶段为不可见状态
-}
-// 当元素处于 进入结束 或 离开开始 阶段时，表示动画快要结束时或离开时的第一帧样式。
-.form-enter-to, .form-leave-from {
-    transform: translate(-50%, -50%) rotateX(-10deg);// 让元素依旧居中，但把旋转角度变小 (-10度)，这样从 -60度到 -10度的变化就体现了翻转效果。
-    opacity: 1; // 将元素的透明度设为 1，从不可见到可见，或在离开时从可见到略有角度后再离场。
 }
 </style>

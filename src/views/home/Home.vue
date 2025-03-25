@@ -2,14 +2,10 @@
     <!-- 添加 router-view 来渲染子路由内容 -->
     <router-view />
 
-    <!-- 错误提示组件 -->
-    <ErrorTip v-if="popupStates['error-tip'].visible" :errorTipData="popupStates['error-tip'].data" />
-    <!-- 弹窗蒙版 -->
-    <Overlay :visible="popupStates['overlay'].visible" @click="closePopup('base-input-form')">
-        <!-- 基础输入表单组件 -->
-        <BaseInputForm :base-input-form="popupStates['base-input-form']"/>
-    </Overlay>
-
+    <!-- 提示弹窗组件 -->
+    <TipPopup />
+    <!-- 蒙版弹窗组件 -->
+    <OverlayPopup />
 </template>
 
 <script setup>
@@ -17,7 +13,7 @@
      * 此处代码块用于引入组件需要的 API、传递的数据和方法、通用数据
      */
     // 引入 vue3 的响应式 API
-    import { ref, provide, onMounted } from 'vue'
+    import { onMounted } from 'vue'
     // 引入 vue-router 的路由 API
     import { useRouter } from 'vue-router'
     // 创建 useRoute 实例
@@ -35,53 +31,10 @@
     /**
      * 此处代码块用于引入组件
      */
-    // 引入 Overlay 蒙版组件
-    import Overlay from "@/components/common/Overlay.vue";
-    // 引入 ErrorTip 错误提示组件
-    import ErrorTip from "@/components/common/ErrorTip.vue";
-    // 引入 BaseInputForm 基础输入表单组件
-    import BaseInputForm from "@/components/common/BaseInputForm.vue";
-
-
-    /**
-     * 此处代码块用于控制各种弹窗的显示与隐藏，将方法提供给子组件调用
-     */
-    // 创建一个统一的弹窗状态管理对象
-    const popupStates = ref({
-        // 蒙版，用于展示蒙版遮罩；默认不显示
-        'overlay': { visible: false },
-        // 错误提示；默认不显示
-        'error-tip': { visible: false, overlayVisible: false, data: {} },
-        // 基础输入表单，默认不显示
-        'base-input-form': { visible: false, overlayVisible: true, data: {}, callback: null },
-    });
-    /**
-     * 创建统一的打开弹窗方法
-     * @param type 弹窗类型，即 popupStates 中的 key
-     * @param data 弹窗数据
-     * @param callback 弹窗回调函数
-     */
-    const openPopup = (type, data = {}, callback = null) => {
-        // 设置蒙版的显示状态
-        popupStates.value['overlay'].visible = popupStates.value[type].overlayVisible;
-        // 设置弹窗的显示状态：显示
-        popupStates.value[type].visible = true;
-        // 设置弹窗的数据
-        popupStates.value[type].data = data;
-        // 设置弹窗的回调函数
-        if (callback) popupStates.value[type].callback = callback;
-    };
-    /**
-     * 创建统一的关闭弹窗方法
-     * @param type 弹窗类型，即 popupStates 中的 key
-     */
-    const closePopup = (type) => {
-        // 设置弹窗的显示状态：隐藏
-        popupStates.value[type].visible = false;
-        popupStates.value['overlay'].visible = false;
-    };
-    // 提供弹窗方法给子组件调用
-    provide('homePopupMethod', { openPopup, closePopup });
+    // 引入 TipPopup 提示弹窗组件
+    import TipPopup from "@/components/common/TipPopup.vue";
+    // 引入 OverlayPopup 蒙版弹窗组件
+    import OverlayPopup from "@/components/common/OverlayPopup.vue";
 
 
     /**
@@ -102,7 +55,6 @@
 
             // 调用获取登录信息的 API
             const loginInfo = await getApiRequest({
-                homePopupMethod: { closePopup },
                 url: `/oneNavApi/index.php`,
                 urlParams: { c: "api", method: "check_login" },
             });
@@ -135,7 +87,7 @@
         }
 
         // 已经登录，调用获取导航数据的 API
-        getCategoryList({ openPopup, closePopup });
+        getCategoryList();
     }
     /**
      * 定义获取登录信息失败时的回调函数

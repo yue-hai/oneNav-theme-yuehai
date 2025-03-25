@@ -3,8 +3,8 @@ import { defineStore } from 'pinia'
 
 /**
  * 定义一个名为 cacheTushan 的 store
- * 这个 store 将用于管理与用户认证相关的状态和操作
- * cacheTushanStore 是一个 store 的实例，可以通过 useStore('cacheTushanStore') 来获取
+ * 这个 store 将用于管理与 tushan 主题相关的状态
+ * cacheTushanStore 是一个 store 的实例，可以通过 import 引入并使用
  */
 export const cacheTushanStore = defineStore('cacheTushan', {
     /**

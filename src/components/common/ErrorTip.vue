@@ -2,9 +2,9 @@
     <!-- 错误提示组件 -->
     <div class="tooltip-container">
         <!-- 鼠标悬停时显示的上方的提示文本 -->
-        <span class="tooltip">{{ errorTipData.tooltip }}</span>
+        <span class="tooltip">{{ data.tooltip }}</span>
         <!-- 提示按钮默认显示的内容 -->
-        <span class="text">{{ errorTipData.text }} ❌</span>
+        <span class="text">{{ data.text }} ❌</span>
         <!-- 鼠标悬停时提示按钮显示的内容 -->
         <span>{{ countdown.toFixed(1) }} 秒后自动关闭 🕒</span>
     </div>
@@ -15,18 +15,27 @@
      * 此处代码块用于引入组件需要的 API、传递的数据和方法、通用数据
      */
     // 引入 vue3 的响应式 API
-    import { ref, inject, onMounted, onUnmounted } from 'vue';
-    // 使用 inject 接收父组件使用 provide 提供的方法
-    const { closePopup } = inject('homePopupMethod');
+    import { ref, toRefs, computed, onMounted, onUnmounted } from 'vue';
     // 接收父组件传递的参数
-    const { errorTipData } = defineProps(['errorTipData']);
+    const props = defineProps(['popupData']);
+    // 因为是响应式数据，所以使用 toRefs 将其解构，使其保持响应式
+    const { popupData } = toRefs(props);
+    // 引入 popupMethodStore 仓库，用于管理提示弹窗和蒙版弹窗
+    import { popupMethodStore } from "@/store/popupMethod.js";
+
+
+    /**
+     * 此处代码块用于定义组件内部的数据和方法
+     */
+    // 计算属性，用于设置 data 中的数据
+    const data = computed(() => popupData.value.data);
 
 
     /**
      * 此处代码块用于控制错误提示的显示与隐藏、倒计时关闭提示
      */
     // 创建一个响应式数据，用于存储倒计时的秒数
-    const countdown = ref(errorTipData["closeCountdown"] ?? 5);
+    const countdown = ref(data.value["closeCountdown"] ?? 5);
     // 用于存储 setTimeout 的 ID，以便在需要时清除定时器
     let closeTimeoutId = null;
 
@@ -45,8 +54,8 @@
                 // 清除定时器
                 clearInterval(closeTimeoutId);
                 closeTimeoutId = null;
-                // 触发关闭提示的事件
-                closePopup('error-tip');
+                // 触发关闭错误提示的事件
+                popupMethodStore().closeTipPopup('error-tip');
             }
         }, 100); // 更新频率为 100 毫秒（0.1 秒）
     };

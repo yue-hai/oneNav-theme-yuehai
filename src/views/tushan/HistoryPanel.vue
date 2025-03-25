@@ -18,12 +18,10 @@
     /**
      * 此处代码块用于引入组件需要的 API、传递的数据和方法、通用数据
      */
-    // 引入 vue3 的响应式 API
-    import { inject } from 'vue';
-    // 使用 inject 接收父组件使用 provide 提供的方法
-    const { openPopup, closePopup } = inject('homePopupMethod');
     // 接收父组件传递的参数
     const { isNavigationVisible } = defineProps(['isNavigationVisible']);
+    // 引入 popupMethodStore 仓库，用于管理提示弹窗和蒙版弹窗
+    import { popupMethodStore } from "@/store/popupMethod.js";
     // 引入 cacheTushanStore 仓库，用于读取和保存用户设置
     import { cacheTushanStore } from "@/store/tushan/cacheTushan.js";
     // 引入 pinia 转换，将仓库转换为响应式变量
@@ -57,7 +55,8 @@
     // 点击编辑按钮时，打开基础输入表单
     const openEditForm = () => {
         // 打开基础输入表单
-        openPopup('base-input-form',
+        popupMethodStore().openOverlayPopup(
+            'base-input-form',
             {
                 inputData: [
                     { title: '行数', value: cacheHistoryPanelRows, image: rowIcon },
@@ -85,8 +84,8 @@
 
         // 计算并设置历史面板链接总数量
         cacheTushanStore().setTotalLinkCount();
-        // 关闭编辑表单
-        closePopup('base-input-form');
+        // 关闭蒙版弹窗
+        popupMethodStore().closeOverlayPopup();
     };
     /**
      * 编辑表单的重置按钮点击事件
@@ -98,8 +97,8 @@
         cacheHistoryPanelColumns.value = 6;
         // 重置间距
         cacheHistoryPanelGap.value = "20px";
-        // 关闭编辑表单
-        closePopup('base-input-form');
+        // 关闭蒙版弹窗
+        popupMethodStore().closeOverlayPopup();
     }
 </script>
 

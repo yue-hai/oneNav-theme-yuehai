@@ -3,8 +3,8 @@ import { defineStore } from 'pinia'
 
 /**
  * 定义一个名为 navigationData 的 store
- * 这个 store 将用于管理与用户认证相关的状态和操作
- * navigationDataStore 是一个 store 的实例，可以通过 useStore('navigationDataStore') 来获取
+ * 这个 store 将用于管理与导航数据相关的状态
+ * navigationDataStore 是一个 store 的实例，可以通过 import 引入并使用
  */
 export const navigationDataStore = defineStore('navigationData', {
     /**
