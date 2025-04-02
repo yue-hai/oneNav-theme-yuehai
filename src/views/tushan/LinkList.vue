@@ -96,33 +96,15 @@
                 return `${serverConfigStore().apiBaseUrl}/${link["font_icon"]}`;
             }
 
-            // 将链接中的 http:// 或 https:// 替换为空，获取链接的域名，然后再去除第一个 / 之后的内容
-            let domain = link.url.replace(/(http:\/\/|https:\/\/)/, '').split('/')[0];
-            // 对域名进行编码，以便在 URL 中传递
-            domain = encodeURIComponent(domain);
-            // 请求获取图标【
-            const response = await getApiRequest({
-                url: `/faviconkit/${domain}/50`,
+            // 请求获取图标
+            const linkIconBase64 = await getApiRequest({
+                url: `/linkIcon/query/website_icon`,
+                urlParams: { url: link.url },
                 handler: {},
-                // 使用 arraybuffer 格式接收数据，获取图标的二进制数据
-                responseType: 'arraybuffer',
             });
 
-            // 判断是否获取到了图标数据
-            if (response && response.data) {
-                // 将 reduce 方法返回的字符串转换为 base64 编码
-                const base64 = btoa(
-                    // Uint8Array 是一个无符号整型数组，其中的每个元素是一个 8 位无符号整数，是二进制数据
-                    new Uint8Array(response.data)
-                        // 使用 reduce 方法将二进制数据转换为字符串
-                        .reduce((data, byte) => data + String.fromCharCode(byte), '')
-                );
-                // 返回 base64 编码的图标数据，
-                return `data:image/png;base64,${base64}`;
-            }
-
-            // 如果获取图标失败，则返回 null
-            return handleIconError(link);
+            // 返回图标 base64 编码
+            return linkIconBase64.data.data;
         } catch (error) {
             // 获取图标失败，则返回 null
             return handleIconError(link);

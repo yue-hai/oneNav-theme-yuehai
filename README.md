@@ -177,9 +177,11 @@ location /oneNavApi/ {
 
 ![添加自定义位置oneNavApi.png](doc/images/添加自定义位置oneNavApi.png)
 
-### ④、添加自定义位置：`/faviconkit`
+### ④、~~添加自定义位置：`/faviconkit`~~（废弃）
 
 > 该位置用于访问获取网站图标的 api 接口
+> 
+> 该位置已经不需要了，因为网站似乎已经关闭了
 
 1. 点击添加位置，设置第三个自定义位置：
    1. 定义位置：`/faviconkit`
@@ -202,7 +204,37 @@ location /faviconkit/ {
 
 ![添加自定义位置faviconkit.png](doc/images/添加自定义位置faviconkit.png)
 
-### ⑤、保存配置
+### ⑤、添加自定义位置：`/linkIcon`
+
+> 1. 该位置用于访问获取网站图标的 api 接口；因为上面的 faviconkit 不能用了，所以自己写了一个
+> 2. 对应的 java 后端程序：[yuehai-tool-1.0-SNAPSHOT-jar-with-dependencies.jar](doc/project/yuehai-tool-1.0-SNAPSHOT-jar-with-dependencies.jar)
+> 3. 对应的 java 后端接口：http://127.0.0.1:10300/query/website_icon?url=https://www.baidu.com/
+
+1. 点击添加位置，设置第三个自定义位置（参数修改为后端部署的地址）：
+   1. 定义位置：`/linkIcon`
+   2. 协议：http
+   3. 转发主机/IP：`127.0.0.1`
+   4. 转发端口：`10300`
+2. 然后点击定义位置后的齿轮按钮，在输入框中输入以下内容：
+   1. `proxy_pass https://127.0.0.1:10300/;`：将请求转发到指定的后端服务器，即 https://127.0.0.1:10300/
+
+```nginx
+location /linkIcon/ {
+    proxy_pass https://127.0.0.1:10300/;
+    proxy_set_header Host 127.0.0.1;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_redirect off;
+    # 启用 SNI，并指定正确的 SNI 名称
+    proxy_ssl_server_name on;
+    proxy_ssl_name 127.0.0.1;
+}
+```
+
+![img.png](doc/images/添加自定义位置linkIcon.png)
+
+### ⑥、保存配置
 
 1. 设置完毕后，点击保存即可
 2. 最后访问：http://127.0.0.1/oneNav
