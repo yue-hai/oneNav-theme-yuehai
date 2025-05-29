@@ -142,7 +142,7 @@ chishin/nginx-proxy-manager-zh:latest
 location /web {
     # alias 设定了路径映射，表示 当请求 `/oneNav/xxx` 时，Nginx 实际访问 `/data/web/oneNav-theme-yuehai/xxx`
     alias /data/web/oneNav-theme-yuehai;
-    # 当访问 `/oneNav/` 目录时，默认返回 `index.html`
+    # 当访问 `/web/` 目录时，默认返回 `index.html`
     index index.html;
 }
 ```
