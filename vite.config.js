@@ -26,12 +26,19 @@ export default defineConfig({
                 // 重写请求路径，将 /api 前缀去掉，转发时路径为原始路径；例如：/api/data/findDuplicate -> /data/findDuplicate
                 rewrite: (path) => path.replace(/^\/oneNavApi/, ''),
                 // 更改请求的源站，伪装为目标服务器发送请求，解决跨域问题
-                changeOrigin: true
+                changeOrigin: true,
+                // 添加 onProxyReq 钩子来设置 cookie
+                configure: (proxy) => {
+                    proxy.on('proxyReq', (proxyReq) => {
+                        // 设置想要发送到目标服务器的 cookie
+                        proxyReq.setHeader('Cookie', 'key=*');
+                    });
+                }
             },
-            // 将 /faviconkit 开头的请求转发到 Favicon Kit api
-            '/faviconkit': {
-                target: 'https://api.faviconkit.com',
-                rewrite: (path) => path.replace(/^\/faviconkit/, ''),
+            // 将 /linkIcon 开头的请求转发到自己部署的获取网站图标的后台接口
+            '/linkIcon': {
+                target: 'http://127.0.0.1:10300',
+                rewrite: (path) => path.replace(/^\/linkIcon/, ''),
                 changeOrigin: true,
                 // 忽略 SSL 证书验证，解决 SSL 证书问题
                 secure: false

@@ -106,105 +106,120 @@ chishin/nginx-proxy-manager-zh:latest
 
 ![上传编译后的文件到指定目录.png](doc/images/上传编译后的文件到指定目录.png)
 
-## 3、代理设置
+# 六、代理设置
 
-> 本次代理域名是 ip + 路径，因为阿里云没有备案不能被解析为域名
+## 1、oneNav 后台的一些说明
 
-### ①、基础设置
+1. 发开前端的过程中发现，oneNav 的接口都是基于相对路径的，所以前端页面的访问地址和后端接口的访问地址最好在同一域名下，这样可以通用 cookie
+2. 如果前端页面和后端接口不在同一域名下，则需要在前端页面的代理中配置后端接口的 cookie，否则会验证失败
+3. 下面是两种情况的配置方法，最后还有通用的配置
 
-1. 进入 nginx-proxy-manager 的管理后台：[http://127.0.0.1:81](http://127.0.0.1:81)
-2. 点击主机 -> 代理服务 -> 添加代理服务
+## 2、和 onenav 后台在同一子域名下
 
-![进入设置代理页面.png](doc/images/进入设置代理页面.png)
+### <span id="6-2">①、基础代理设置</span>
 
-3. 设置一个代理：
-   1. 域名：本服务器的 ip
-   2. 协议：http；没有域名，无法设置证书，也就没有 https
-   3. 转发主机/IP：本服务器的 ip
-   4. 转发端口：80，如果不可用，自定义其他的端口也可以
-   5. 缓存资源、阻止常见漏洞、支持 WebSockets 不要开启
+1. 因为是和 onenav 后台在同一子域名下，所以只需要配置 oneNav 后台的代理即可
+2. 这里假设 oneNav 后台是部署在 docker 容器中
+   1. docker 网络模式是 bridge 模式，即 ip 是：172.17.0.1
+   2. oneNav 后台映射出来的的端口是 41043 
+3. 配置详情如下，配置后访问：`https://域名:端口/` 即可访问 onenav 默认前端主题页面
 
-![添加代理配置.png](doc/images/添加代理配置.png)
+![在同一子域名下的基础代理设置.png](doc/images/在同一子域名下的基础代理设置.png)
 
-### ②、添加自定义位置：`/oneNav`
+### <span id="6-3">②、添加自定义位置：`/web`</span>
 
-> 该位置用于访问 oneNav 主题的前端页面
+> 该位置用于访问该项目的前端页面
 
 1. 点击自定义位置：
-   1. 定义位置：`/oneNav`
+   1. 定义位置：`/web`
    2. 协议：http
    3. 转发主机/IP：`127.0.0.1`
    4. 转发端口：`80`
-2. 然后点击定义位置后的齿轮按钮，在输入框中输入以下内容：
-   1. `location /oneNav {}`：匹配访问路径 `/oneNav` 的请求
-   2. `alias /data/web/oneNav-theme-yuehai;`：alias 设定了路径映射，表示 当请求 `/oneNav/xxx` 时，Nginx 实际访问 `/data/web/oneNav-theme-yuehai/xxx`
-   3. `index index.html;`：当访问 `/oneNav/` 目录时，默认返回 `index.html`
+2. 然后点击定义位置后的齿轮按钮，在输入框中输入以下内容
+3. 配置后访问：`https://域名:端口/web` 即可访问该项目的前端页面
 
 ```nginx
-location /oneNav {
+location /web {
+    # alias 设定了路径映射，表示 当请求 `/oneNav/xxx` 时，Nginx 实际访问 `/data/web/oneNav-theme-yuehai/xxx`
     alias /data/web/oneNav-theme-yuehai;
+    # 当访问 `/oneNav/` 目录时，默认返回 `index.html`
     index index.html;
 }
 ```
 
-![添加自定义位置oneNav.png](doc/images/添加自定义位置oneNav.png)
+![在同一子域名下的添加自定义位置oneNav.png](doc/images/在同一子域名下的添加自定义位置web.png)
 
 ### ③、添加自定义位置：`/oneNavApi`
 
-> 该位置用于访问 oneNav 主题的后端接口
+> 该位置用于访问 oneNav 主题的后端接口，获取导航书签数据
 
 1. 点击添加位置，设置第二个自定义位置：
    1. 定义位置：`/oneNavApi`
    2. 协议：http
-   3. 转发主机/IP：部署 oneNav 的服务器 ip
-   4. 转发端口：部署 oneNav 的服务器端口
+   3. 转发主机/IP：部署 oneNav 的服务器 ip，即上面的 `172.17.0.1`
+   4. 转发端口：部署 oneNav 的服务器端口，即上面的 `41043`
 2. 然后点击定义位置后的齿轮按钮，在输入框中输入以下内容：
-   1. `proxy_pass http://oneNav服务器Ip:oneNav服务器端口/;`：将请求转发到指定的后端服务器，即部署 oneNav 的服务器
-   2. `proxy_set_header Host $host;`：设置 Host 请求头为客户端请求时的主机名
-   3. `proxy_set_header X-Real-IP $remote_addr;`：设置 X-Real-IP 请求头为客户端的真实 IP
-   4. `proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;`：设置 X-Forwarded-For 请求头，包含请求经过的所有代理服务器的 IP
-   5. `proxy_set_header X-Forwarded-Proto $scheme;`：设置 X-Forwarded-Proto 请求头，表示客户端使用的协议（http 或 https）
 
 ```nginx
 location /oneNavApi/ {
-    proxy_pass http://oneNav服务器Ip:oneNav服务器端口/;
-    proxy_set_header Host $host;
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header X-Forwarded-Proto $scheme;
+    # 强制重写路径，即将请求路径中的 `/oneNavApi/` 替换为 `/`
+    rewrite ^/oneNavApi/(.*)$ /$1 break; 
+    # 将请求转发到指定的后端服务器，即部署 oneNav 的服务器
+    proxy_pass http://172.17.0.1:41043; 
+
+    # 动态传递客户端的 Cookie，用于 oneNav 后端的身份验证
+    proxy_set_header Cookie $http_cookie; 
 }
 ```
 
-![添加自定义位置oneNavApi.png](doc/images/添加自定义位置oneNavApi.png)
+![在同一子域名下的添加自定义位置oneNavApi.png](doc/images/在同一子域名下的添加自定义位置oneNavApi.png)
 
-### ④、~~添加自定义位置：`/faviconkit`~~（废弃）
+## 3、和 onenav 后台不在同一子域名下
 
-> 该位置用于访问获取网站图标的 api 接口
-> 
-> 该位置已经不需要了，因为网站似乎已经关闭了
+### ①、基础代理设置
 
-1. 点击添加位置，设置第三个自定义位置：
-   1. 定义位置：`/faviconkit`
-   2. 协议：https
-   3. 转发主机/IP：`api.faviconkit.com`
-   4. 转发端口：`80`
-2. 然后点击定义位置后的齿轮按钮，在输入框中输入以下内容：
-   1. `proxy_pass https://api.faviconkit.com/;`：将请求转发到指定的后端服务器，即 api.faviconkit.com
-   2. `proxy_set_header Host api.faviconkit.com;`：设置 Host 请求头为 api.faviconkit.com，否则 api.faviconkit.com 会返回 403
+1. 因为是和 onenav 后台不在同一子域名下，所以需要配置 onenav 后台的代理、前端页面的代理
+2. onenav 后台的代理和上面 [和 onenav 后台在同一子域名下的基础代理设置](#6-2) 的配置一样
+3. 前端页面的代理配置如下，其中的 协议、转发主机/IP、转发端口 都是占位，没有实际作用
+
+![不在同一子域名下的基础代理设置.png](doc/images/不在同一子域名下的基础代理设置.png)
+
+### ②、添加自定义位置：`/web`
+
+1. 此处添加自定义位置和上面 [和 onenav 后台在同一子域名下的添加自定义位置：`/web`](#6-3) 的配置一样
+2. 配置后访问：`https://域名:端口/web` 即可访问该项目的前端页面
+
+### ③、添加自定义位置：`/oneNavApi`
+
+1. 此处添加自定义位置和上面不同，首先需要进入部署的 oneNav 后台
+2. 登录后，按 f12 打开开发者工具，然后点击我的连接，在开发者工具的 Network 面板中，找到 `/index.php` 请求，复制其中的 cookie 值
+
+![不在同一子域名下的添加自定义位置oneNavApi的获取cookie.png](doc/images/不在同一子域名下的添加自定义位置oneNavApi的获取cookie.png)
+
+3. 回到 nginx，点击添加位置，设置第二个自定义位置：
+   1. 定义位置：`/oneNavApi`
+   2. 协议：http
+   3. 转发主机/IP：部署 oneNav 的服务器 ip，即上面的 `172.17.0.1`
+   4. 转发端口：部署 oneNav 的服务器端口，即上面的 `41043`
+4. 然后点击定义位置后的齿轮按钮，在输入框中输入以下内容，将最后一行的 `key=***` 替换为上面复制的 cookie 值
 
 ```nginx
-location /faviconkit/ {
-    proxy_pass https://api.faviconkit.com/;
-    proxy_set_header Host api.faviconkit.com;
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header X-Forwarded-Proto $scheme;
+location /oneNavApi/ {
+    # 强制重写路径，即将请求路径中的 `/oneNavApi/` 替换为 `/`
+    rewrite ^/oneNavApi/(.*)$ /$1 break; 
+    # 将请求转发到指定的后端服务器，即部署 oneNav 的服务器
+    proxy_pass http://172.17.0.1:41043; 
+
+    # 动态传递客户端的 Cookie，用于 oneNav 后端的身份验证
+    proxy_set_header Cookie 'key=***';
 }
 ```
 
-![添加自定义位置faviconkit.png](doc/images/添加自定义位置faviconkit.png)
+![不在同一子域名下的添加自定义位置oneNavApi.png](doc/images/不在同一子域名下的添加自定义位置oneNavApi.png)
 
-### ⑤、添加自定义位置：`/linkIcon`
+## 4、通用配置
+
+### ①、添加自定义位置：`/linkIcon`
 
 > 1. 该位置用于访问获取网站图标的 api 接口；因为上面的 faviconkit 不能用了，所以自己写了一个
 > 2. 对应的 java 后端程序：[yuehai-tool-1.0-SNAPSHOT-jar-with-dependencies.jar](doc/project/yuehai-tool-1.0-SNAPSHOT-jar-with-dependencies.jar)
@@ -220,23 +235,34 @@ location /faviconkit/ {
 
 ```nginx
 location /linkIcon/ {
-    proxy_pass https://127.0.0.1:10300/;
-    proxy_set_header Host 127.0.0.1;
+    # 将请求转发到指定的后端服务器，即获取网站图标的 java 服务器
+    proxy_pass http://172.17.0.1:41900/;
+    # 设置转发请求头中的 X-Real-IP 字段，值为发起请求的客户端的真实 IP 地址
     proxy_set_header X-Real-IP $remote_addr;
+    # 设置转发请求头中的 X-Forwarded-For 字段，用于追踪经过多层代理的请求源 IP
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    # 设置转发请求头中的 X-Forwarded-Proto 字段，值为原始请求使用的协议（http 或 https）
     proxy_set_header X-Forwarded-Proto $scheme;
+    # 关闭 Nginx 自动修改后端服务器响应头中的 Location 和 Refresh 字段
+    # 通常在后端能正确处理重定向时设为 off，以避免不必要的修改
     proxy_redirect off;
-    # 启用 SNI，并指定正确的 SNI 名称
-    proxy_ssl_server_name on;
-    proxy_ssl_name 127.0.0.1;
+    
+    # 如果代理为了 https 协议，则需要以下配置
+    # 设置转发到后端服务器的请求头中的 Host 字段
+    # proxy_set_header Host www.test.com;
+    # 启用 SNI（服务器名称指示）功能，在与后端服务器建立 SSL/TLS 连接时
+    # 允许 Nginx 发送主机名，以便后端服务器能根据不同域名返回正确的 SSL 证书
+    # proxy_ssl_server_name on;
+    # 指定在与后端服务器进行 SSL/TLS 握手时使用的 SNI 名称，明确告诉后端，Nginx 是代表 www.test.com 这个域名来请求的
+    # proxy_ssl_name www.test.com;
 }
 ```
 
-![img.png](doc/images/添加自定义位置linkIcon.png)
+![添加自定义位置linkIcon.png](doc/images/添加自定义位置linkIcon.png)
 
-### ⑥、保存配置
+## 5、配置结束
 
 1. 设置完毕后，点击保存即可
-2. 最后访问：http://127.0.0.1/oneNav
+2. 最后访问：`https://域名:端口/web`  即可访问该项目的前端页面
 
 
