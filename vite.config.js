@@ -37,7 +37,7 @@ export default defineConfig({
             },
             // 将 /linkIcon 开头的请求转发到自己部署的获取网站图标的后台接口
             '/linkIcon': {
-                target: 'http://127.0.0.1:10300',
+                target: 'http://127.0.0.1:41900',
                 rewrite: (path) => path.replace(/^\/linkIcon/, ''),
                 changeOrigin: true,
                 // 忽略 SSL 证书验证，解决 SSL 证书问题

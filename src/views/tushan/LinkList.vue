@@ -83,7 +83,7 @@
     };
     /**
      * 异步获取链接图标，如果图标是通过 font_icon 属性设置的，则直接使用 font_icon 属性值作为图标
-     * 如果没有设置 font_icon 属性，则通过请求获取链接的图标，这样获取的图标将转为 base64 编码
+     * 如果没有设置 font_icon 属性，则通过请求获取链接的图标
      * 如果获取图标失败，则返回 null，使用默认图标
      * @param link
      * @returns {Promise<string|null>} - 图标地址
@@ -97,14 +97,14 @@
             }
 
             // 请求获取图标
-            const linkIconBase64 = await getApiRequest({
+            const linkIcon = await getApiRequest({
                 url: `/linkIcon/query/website_icon`,
                 urlParams: { url: link.url },
                 handler: {},
             });
 
-            // 返回图标 base64 编码
-            return linkIconBase64.data.data;
+            // 返回图标 url
+            return linkIcon.data.data;
         } catch (error) {
             // 获取图标失败，则返回 null
             return handleIconError(link);
@@ -116,11 +116,8 @@
      * @returns {string|null} - 图标地址
      */
     const handleIconError = (link) => {
-        // 如果 linkIconList 中有数据，且是 base64 编码的图标
-        if (linkIconList.value[link.id] && linkIconList.value[link.id].startsWith('data:image/png;base64,')) {
-            // 直接返回原来的图标
-            return linkIconList.value[link.id];
-        }
+        // 如果 linkIconList 中有数据，直接返回原来的图标
+        if (linkIconList.value[link.id]) return linkIconList.value[link.id];
 
         // 如果 linkIconList 没有数据，则返回 null，使用默认图标
         return null;
